@@ -16,7 +16,7 @@ local NextId:number = 1;
 -- Utilities --
 ---------------
 
-function BuildNotification(id, message, turn)
+local function BuildNotification(id, message, turn)
     local notification = {};
 
     notification.GetID               = function() return id + 8192; end  -- Must be unique
@@ -101,21 +101,21 @@ local function RefreshUpcomingReminders()
   Controls.UpcomingReminderRows:DestroyAllChildren()
   
   for _, reminder in pairs(UpcomingReminders) do
-    reminderInstance = {}
+    local reminderInstance = {}
     ContextPtr:BuildInstanceForControl("UpcomingReminderInstance", reminderInstance, Controls.UpcomingReminderRows);
     reminderInstance.Turn:SetText(reminder.Turn);
     reminderInstance.Message:SetText(reminder.Message);
 
-    sortingTag = reminder.Turn * 256 + reminder.Id;
+    local sortingTag = reminder.Turn * 256 + reminder.Id;
     Controls.UpcomingReminderRows:GetChildren()[Controls.UpcomingReminderRows:GetNumChildren()]:SetTag(sortingTag);
 
     reminderInstance.TrashButton:RegisterCallback(
       Mouse.eLClick,
       function()
-      print("TurnReminder: TrashButtonCallback(" .. reminder.Id .. ")");
-      UpcomingReminders[tostring(reminder.Id)] = nil;
-      RefreshUpcomingReminders();
-    end
+        print("TurnReminder: TrashButtonCallback(" .. reminder.Id .. ")");
+        UpcomingReminders[tostring(reminder.Id)] = nil;
+        RefreshUpcomingReminders();
+      end
     );
   end
 
@@ -151,7 +151,7 @@ end
 -- The decrement arrow to the left of the TurnEditBox
 local function OnTurnEditLeftButtonClick()
   print("TurnReminder: OnTurnEditLeftButtonClick");
-  value = tonumber(Controls.TurnEditBox:GetText() or 0);
+  local value = tonumber(Controls.TurnEditBox:GetText() or 0);
   if value > 1 then
     Controls.TurnEditBox:SetText(value - 1);
   end
@@ -160,7 +160,7 @@ end
 -- The increment arrow to the right of the TurnEditBox
 local function OnTurnEditRightButtonClick()
   print("TurnReminder: OnTurnEditRightButtonClick");
-  value = tonumber(Controls.TurnEditBox:GetText() or 0);
+  local value = tonumber(Controls.TurnEditBox:GetText() or 0);
   if value < 9999 then
     Controls.TurnEditBox:SetText(value + 1);
   end
@@ -169,7 +169,7 @@ end
 -- The box that specifieds the number of turns in the future to set the reminder
 local function OnTurnEditBoxCommit()
   print("TurnReminder: OnTurnEditBoxCommit");
-  value = tonumber(Controls.TurnEditBox:GetText() or 0);
+  local value = tonumber(Controls.TurnEditBox:GetText() or 0);
   if (value < 1) then
     Controls.TurnEditBox:SetText("1");
   end
@@ -193,7 +193,7 @@ end
 local function OnLoadGameViewStateDone()
   print("TurnReminder: OnLoadGameViewStateDone");
   AddButtonToTopPanel();
-  ContextPtr:SetHide(false);  -- TODO: What does this line do? It's very important
+  ContextPtr:SetHide(false);
 end
 
 -- Callback for keystrokes
@@ -221,13 +221,13 @@ end
 local function OnPlayerTurnActivated(playerId, firstTime)
   if not (firstTime and playerId == Game.GetLocalPlayer()) then return end
 
-  currentTurn = CurrentTurn();
+  local currentTurn = CurrentTurn();
   print("TurnReminder: OnPlayerTurnActivated(turn = "..currentTurn..")");
 
   for index, reminder in pairs(UpcomingReminders) do
     if reminder.Turn == currentTurn then
       local NotificationTurn = CurrentTurn()
-      notification = BuildNotification(reminder.Id, reminder.Message, currentTurn);
+      local notification = BuildNotification(reminder.Id, reminder.Message, currentTurn);
             
       LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
 
