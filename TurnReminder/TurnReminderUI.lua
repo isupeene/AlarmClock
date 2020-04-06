@@ -3,75 +3,53 @@
 -- DateCreated: 4/4/2020 1:53:04 PM
 --------------------------------------------------------------
 
--- TODO: Spaces instead of tabs
+print("Start Initialization");
+
 include("InstanceManager");
 include("NotificationPanel");
 
-local TopPanelButtonAdded = false; -- flag to indicate the button was added to the top panel
+local TopPanelButtonAdded = false;
 local UpcomingReminders:table = {};
 local NextId:number = 1;
 
--- TODO: Tidy this up. This is disgusting.
-function GetDefaultNotification(id, message, dismissTurn)             -- You need to send a table with at least :
-  local localPlayer               = Game.GetLocalPlayer();
-    local DefaultNotification                     = {};
+function GetDefaultNotification(id, message, turn)
+    local localPlayer                       = Game.GetLocalPlayer();
+    local DefaultNotification               = {};
 
-    DefaultNotification.IsCustom            = true -- Need to be true to separate custom from game notification
+    DefaultNotification.IsCustom            = true
     
     DefaultNotification.GetTypeName         = function() return "NOTIFICATION_TURN_REMINDER"; end
     DefaultNotification.GetPlayerID         = function() return localPlayer; end
-    DefaultNotification.GetID               = function() return id + 8192; end  -- Should be unique
-    
+    DefaultNotification.GetID               = function() return id + 8192; end  -- Must be unique
     DefaultNotification.GetGroup            = function() return NotificationGroups.NONE; end
     DefaultNotification.GetIconName         = function() return "ICON_NOTIFICATION_GENERIC"; end
+
     DefaultNotification.GetType             = function() return 888888; end -- 888888 is the default handler. 888889 will trigger the event specified by "GetEventOnActivate"
     DefaultNotification.GetEndTurnBlocking  = function() return EndTurnBlockingTypes.NO_ENDTURN_BLOCKING; end
     DefaultNotification.IsIconDisplayable   = function() return true; end
     
-    DefaultNotification.IsValidForPhase     = function() return ReadyForPhase; end -- should always be true, your notif should not try to appear before the game is loadind
-    
-    DefaultNotification.IsAutoNotify        = function() return false; end -- if false everything is automatic, if true you need to give your number of notif... never needed it
-    
-    DefaultNotification.GetMessage          = function() return "Turn Reminder"; end -- title of your notification, should not be nil.. crash the game :/
-    
-    DefaultNotification.GetSummary          = function() return message; end -- Summary of the notification that will be displayed, as the message not nil pls
+    DefaultNotification.IsValidForPhase     = function() return true; end
+    DefaultNotification.IsAutoNotify        = function() return false; end
+    DefaultNotification.GetMessage          = function() return "Turn Reminder"; end -- Must not be nil
+    DefaultNotification.GetSummary          = function() return message; end -- Must not be nil
     
     DefaultNotification.CanUserDismiss      = function() return true; end -- should always be true?
     
+    -- Options to move the camera when the notification is activated
     DefaultNotification.IsLocationValid     = function() return false; end -- if you want the notification to move the camera somewhere when clicked set true here
-    
     DefaultNotification.GetLocation         = function() return 0, 0; end -- and set plot X, Y here
-    
     DefaultNotification.IsTargetValid       = function() return false; end -- if you want the notification to select a city or a unit when clicked set true here, no need to give location if you give target
-    
-    DefaultNotification.GetTarget           = function() return playerID, unitID, PlayerComponentTypes.UNIT; end -- if unit playerID, unitID, PlayerComponentTypes.UNIT or if cityplayerID, cityID, PlayerComponentTypes.CITY 
-    
-    DefaultNotification.IsVisibleInUI       = function() return true; end -- should always be true?
-    
-    DefaultNotification.Activate            = function(Boolean) end -- never truly understand this one too? from the game code "Passing true, signals that this is the user trying to do the activation."
-    
-    DefaultNotification.GetCount            = function() return 1; end -- if you set autonotify to true you need to give count... never used
-    
-    DefaultNotification.GetAddTurn          = function() return dismissTurn; end -- Give the turn you want your notification to be dissmissed it will dissmiss the turn just after
-    DefaultNotification.EraseOnStartTurn    = true; -- if is false won't erase on start turn even if you set "GetAddTurn"
-    DefaultNotification.DissmissOnActivate  = false; -- Will dismiss on notification is clicked (need GetType 888889)
-    DefaultNotification.GetEventOnActivate  = "Default_Event" -- Name of the Event when GetType is 888889
+    DefaultNotification.GetTarget           = function() return localPlayer, nil, nil; end -- PlayerId, EntityId, EntityType (PlayerComponentTypes.{UNIT|CITY}
+
+    DefaultNotification.IsVisibleInUI       = function() return true; end
+    DefaultNotification.Activate            = function(Boolean) end
+    DefaultNotification.GetCount            = function() return 1; end
+    DefaultNotification.GetAddTurn          = function() return turn; end -- Notification will be dismissed on the following turn
+    DefaultNotification.EraseOnStartTurn    = true;
     
   return DefaultNotification
 end
 
-
-
-
-
-
-
-
-
-
-
---************************************************************
--- Add the RMT button to the top panel
 local function AddButtonToTopPanel()
   print("TurnReminder: AddButtonToTopPanel");
   if not TopPanelButtonAdded then
@@ -86,7 +64,6 @@ local function AddButtonToTopPanel()
   end
 end
 
---******************************************************************************
 local function ShowDialog()
   print("TurnReminder: ShowDialog");
   Controls.TurnEditBox:SetText("1");
@@ -94,7 +71,6 @@ local function ShowDialog()
   Controls.TurnReminderDialogContainer:SetHide(false);
 end
 
---******************************************************************************
 local function HideDialog()
   print("TurnReminder: HideDialog");
   Controls.TurnReminderDialogContainer:SetHide(true);
@@ -109,7 +85,6 @@ local function CurrentTurn()
   return currentTurn;
 end
 
---******************************************************************************
 local function AddUpcomingReminder(turnsInFuture:number, message:string)
   print("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
 
@@ -117,7 +92,6 @@ local function AddUpcomingReminder(turnsInFuture:number, message:string)
   NextId = NextId + 1;
 end
 
---******************************************************************************
 local function RefreshUpcomingReminders()
   print("TurnReminder: RefreshUpcomingReminders");
 
@@ -159,8 +133,11 @@ local function RefreshUpcomingReminders()
   end
 end
 
---************************************************************
--- Callback when the Top Panel button is clicked
+---------------
+-- Callbacks --
+---------------
+
+-- The top panel button next to the CivPedia
 local function OnTopPanelButtonClick()
   print("TurnReminder: OnTopPanelButtonClick");
   if not Controls.TurnReminderDialogContainer:IsHidden() then
@@ -170,8 +147,7 @@ local function OnTopPanelButtonClick()
   end
 end
 
---************************************************************
--- Callback when the left arrow button is clicked
+-- The decrement arrow to the left of the TurnEditBox
 local function OnTurnEditLeftButtonClick()
   print("TurnReminder: OnTurnEditLeftButtonClick");
   value = tonumber(Controls.TurnEditBox:GetText() or 0);
@@ -180,8 +156,7 @@ local function OnTurnEditLeftButtonClick()
   end
 end
 
---************************************************************
--- Callback when the right arrow button is clicked
+-- The increment arrow to the right of the TurnEditBox
 local function OnTurnEditRightButtonClick()
   print("TurnReminder: OnTurnEditRightButtonClick");
   value = tonumber(Controls.TurnEditBox:GetText() or 0);
@@ -190,6 +165,7 @@ local function OnTurnEditRightButtonClick()
   end
 end
 
+-- The box that specifieds the number of turns in the future to set the reminder
 local function OnTurnEditBoxCommit()
   print("TurnReminder: OnTurnEditBoxCommit");
   value = tonumber(Controls.TurnEditBox:GetText() or 0);
@@ -198,8 +174,7 @@ local function OnTurnEditBoxCommit()
   end
 end
 
---************************************************************
--- Callback when the OK button in the Turn Reminder dialog is clicked
+-- The OK button on the right of the dialog
 local function OnAddTurnReminderButtonClick()
   print("TurnReminder: OnAddTurnReminderButtonClick");
 
@@ -212,21 +187,14 @@ local function OnAddTurnReminderButtonClick()
   end
 end
 
---************************************************************
--- Callback when the number-of-turns box is edited
--- local function
--- end
 
-
---************************************************************
--- Callback of the load game UI event
+-- Callback when we load into the game for the first time
 local function OnLoadGameViewStateDone()
   print("TurnReminder: OnLoadGameViewStateDone");
   AddButtonToTopPanel();
   ContextPtr:SetHide(false);  -- TODO: What does this line do? It's very important
 end
 
---************************************************************
 -- Callback for keystrokes
 local function InputHandler(input:table)
   if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
@@ -274,10 +242,6 @@ local function OnPlayerTurnActivated(playerId, firstTime)
     RefreshUpcomingReminders();
   end
 end
-
-
--- TODO: Have a hotkey to open, and hit ESC to close
-print("Start Initialization");
 
 Events.LoadGameViewStateDone.Add(OnLoadGameViewStateDone);
 ContextPtr:SetInputHandler(InputHandler, true);
