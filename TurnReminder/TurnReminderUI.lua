@@ -123,14 +123,10 @@ local function RefreshUpcomingReminders()
 
   if next(UpcomingReminders) ~= nil then
     Controls.TurnReminderDialogContainer:SetSizeY(460);
-    Controls.TurnReminderDialogUpcomingGrid:SetShow(true);
-    Controls.UpcomingReminderHeaders:SetShow(true);
-    Controls.UpcomingReminderRowsScrollPanel:SetShow(true);
+    Controls.UpcomingRemindersStack:SetShow(true);
   else
     Controls.TurnReminderDialogContainer:SetSizeY(135);
-    Controls.TurnReminderDialogUpcomingGrid:SetHide(true);
-    Controls.UpcomingReminderHeaders:SetHide(true);
-    Controls.UpcomingReminderRowsScrollPanel:SetHide(true);
+    Controls.UpcomingRemindersStack:SetHide(true);
   end
 end
 
