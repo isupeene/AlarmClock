@@ -13,7 +13,7 @@ local NextId:number = 1;
 
 -- TODO: Tidy this up. This is disgusting.
 function GetDefaultNotification(id, message, dismissTurn)             -- You need to send a table with at least :
-	local localPlayer 							= Game.GetLocalPlayer();
+  local localPlayer               = Game.GetLocalPlayer();
     local DefaultNotification                     = {};
 
     DefaultNotification.IsCustom            = true -- Need to be true to separate custom from game notification
@@ -57,7 +57,7 @@ function GetDefaultNotification(id, message, dismissTurn)             -- You nee
     DefaultNotification.DissmissOnActivate  = false; -- Will dismiss on notification is clicked (need GetType 888889)
     DefaultNotification.GetEventOnActivate  = "Default_Event" -- Name of the Event when GetType is 888889
     
-	return DefaultNotification
+  return DefaultNotification
 end
 
 
@@ -73,143 +73,143 @@ end
 --************************************************************
 -- Add the RMT button to the top panel
 local function AddButtonToTopPanel()
-	print("TurnReminder: AddButtonToTopPanel");
-	if not TopPanelButtonAdded then
-		local tPanRightStack:table = ContextPtr:LookUpControl("/InGame/TopPanel/RightContents"); -- top panel right stack where clock civilopedia and menu is
-		if tPanRightStack ~= nil then
-			Controls.TurnReminderTopPanelButton:ChangeParent(tPanRightStack);
-			tPanRightStack:AddChildAtIndex(Controls.TurnReminderTopPanelButton, 3);
-			tPanRightStack:CalculateSize();
-			tPanRightStack:ReprocessAnchoring();
-			TopPanelButtonAdded = true;
-		end
-	end
+  print("TurnReminder: AddButtonToTopPanel");
+  if not TopPanelButtonAdded then
+    local tPanRightStack:table = ContextPtr:LookUpControl("/InGame/TopPanel/RightContents"); -- top panel right stack where clock civilopedia and menu is
+    if tPanRightStack ~= nil then
+      Controls.TurnReminderTopPanelButton:ChangeParent(tPanRightStack);
+      tPanRightStack:AddChildAtIndex(Controls.TurnReminderTopPanelButton, 3);
+      tPanRightStack:CalculateSize();
+      tPanRightStack:ReprocessAnchoring();
+      TopPanelButtonAdded = true;
+    end
+  end
 end
 
 --******************************************************************************
 local function ShowDialog()
-	print("TurnReminder: ShowDialog");
-	Controls.TurnEditBox:SetText("1");
-	Controls.ReminderText:SetText("");
-	Controls.TurnReminderDialogContainer:SetHide(false);
+  print("TurnReminder: ShowDialog");
+  Controls.TurnEditBox:SetText("1");
+  Controls.ReminderText:SetText("");
+  Controls.TurnReminderDialogContainer:SetHide(false);
 end
 
 --******************************************************************************
 local function HideDialog()
-	print("TurnReminder: HideDialog");
-	Controls.TurnReminderDialogContainer:SetHide(true);
+  print("TurnReminder: HideDialog");
+  Controls.TurnReminderDialogContainer:SetHide(true);
 end
 
 -- Use the same code to get the current turn as in TopPanel.lua, to be consistent with the top panel turn counter
 local function CurrentTurn()
-	local currentTurn = Game.GetCurrentGameTurn();
-	if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_NORMALIZED_TURN") then
-		currentTurn = (currentTurn - GameConfiguration.GetStartTurn()) + 1; -- Keep turns starting at 1.
-	end
-	return currentTurn;
+  local currentTurn = Game.GetCurrentGameTurn();
+  if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_NORMALIZED_TURN") then
+    currentTurn = (currentTurn - GameConfiguration.GetStartTurn()) + 1; -- Keep turns starting at 1.
+  end
+  return currentTurn;
 end
 
 --******************************************************************************
 local function AddUpcomingReminder(turnsInFuture:number, message:string)
-	print("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
+  print("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
 
-	UpcomingReminders[tostring(NextId)] = {Turn = CurrentTurn() + turnsInFuture, Message = message, Id = NextId};
-	NextId = NextId + 1;
+  UpcomingReminders[tostring(NextId)] = {Turn = CurrentTurn() + turnsInFuture, Message = message, Id = NextId};
+  NextId = NextId + 1;
 end
 
 --******************************************************************************
 local function RefreshUpcomingReminders()
-	print("TurnReminder: RefreshUpcomingReminders");
+  print("TurnReminder: RefreshUpcomingReminders");
 
-	Controls.UpcomingReminderRows:DestroyAllChildren()
-	
-	for _, reminder in pairs(UpcomingReminders) do
-	  reminderInstance = {}
-	  ContextPtr:BuildInstanceForControl("UpcomingReminderInstance", reminderInstance, Controls.UpcomingReminderRows);
-	  reminderInstance.Turn:SetText(reminder.Turn);
-	  reminderInstance.Message:SetText(reminder.Message);
+  Controls.UpcomingReminderRows:DestroyAllChildren()
+  
+  for _, reminder in pairs(UpcomingReminders) do
+    reminderInstance = {}
+    ContextPtr:BuildInstanceForControl("UpcomingReminderInstance", reminderInstance, Controls.UpcomingReminderRows);
+    reminderInstance.Turn:SetText(reminder.Turn);
+    reminderInstance.Message:SetText(reminder.Message);
 
-	  sortingTag = reminder.Turn * 256 + reminder.Id;
-	  Controls.UpcomingReminderRows:GetChildren()[Controls.UpcomingReminderRows:GetNumChildren()]:SetTag(sortingTag);
+    sortingTag = reminder.Turn * 256 + reminder.Id;
+    Controls.UpcomingReminderRows:GetChildren()[Controls.UpcomingReminderRows:GetNumChildren()]:SetTag(sortingTag);
 
-	  reminderInstance.TrashButton:RegisterCallback(
-	    Mouse.eLClick,
-	    function()
-		  print("TurnReminder: TrashButtonCallback(" .. reminder.Id .. ")");
-		  UpcomingReminders[tostring(reminder.Id)] = nil;
-		  RefreshUpcomingReminders();
-		end
-	  );
-	end
+    reminderInstance.TrashButton:RegisterCallback(
+      Mouse.eLClick,
+      function()
+      print("TurnReminder: TrashButtonCallback(" .. reminder.Id .. ")");
+      UpcomingReminders[tostring(reminder.Id)] = nil;
+      RefreshUpcomingReminders();
+    end
+    );
+  end
 
-	Controls.UpcomingReminderRows:SortChildren(function(a, b) return a:GetTag() < b:GetTag() end);
+  Controls.UpcomingReminderRows:SortChildren(function(a, b) return a:GetTag() < b:GetTag() end);
 
-	if next(UpcomingReminders) ~= nil then
-		print("There were upcoming reminders!");
-		Controls.TurnReminderDialogContainer:SetSizeY(460);
-		Controls.TurnReminderDialogUpcomingGrid:SetShow(true);
-		Controls.UpcomingReminderHeaders:SetShow(true);
-		Controls.UpcomingReminderRowsScrollPanel:SetShow(true);
-	else
-		print("There were no upcoming reminders!");
-		Controls.TurnReminderDialogContainer:SetSizeY(135);
-		Controls.TurnReminderDialogUpcomingGrid:SetHide(true);
-		Controls.UpcomingReminderHeaders:SetHide(true);
-		Controls.UpcomingReminderRowsScrollPanel:SetHide(true);
-	end
+  if next(UpcomingReminders) ~= nil then
+    print("There were upcoming reminders!");
+    Controls.TurnReminderDialogContainer:SetSizeY(460);
+    Controls.TurnReminderDialogUpcomingGrid:SetShow(true);
+    Controls.UpcomingReminderHeaders:SetShow(true);
+    Controls.UpcomingReminderRowsScrollPanel:SetShow(true);
+  else
+    print("There were no upcoming reminders!");
+    Controls.TurnReminderDialogContainer:SetSizeY(135);
+    Controls.TurnReminderDialogUpcomingGrid:SetHide(true);
+    Controls.UpcomingReminderHeaders:SetHide(true);
+    Controls.UpcomingReminderRowsScrollPanel:SetHide(true);
+  end
 end
 
 --************************************************************
 -- Callback when the Top Panel button is clicked
 local function OnTopPanelButtonClick()
-	print("TurnReminder: OnTopPanelButtonClick");
-	if not Controls.TurnReminderDialogContainer:IsHidden() then
-		HideDialog();
-	else
-		ShowDialog();
-	end
+  print("TurnReminder: OnTopPanelButtonClick");
+  if not Controls.TurnReminderDialogContainer:IsHidden() then
+    HideDialog();
+  else
+    ShowDialog();
+  end
 end
 
 --************************************************************
 -- Callback when the left arrow button is clicked
 local function OnTurnEditLeftButtonClick()
-	print("TurnReminder: OnTurnEditLeftButtonClick");
-	value = tonumber(Controls.TurnEditBox:GetText() or 0);
-	if value > 1 then
-	  Controls.TurnEditBox:SetText(value - 1);
-	end
+  print("TurnReminder: OnTurnEditLeftButtonClick");
+  value = tonumber(Controls.TurnEditBox:GetText() or 0);
+  if value > 1 then
+    Controls.TurnEditBox:SetText(value - 1);
+  end
 end
 
 --************************************************************
 -- Callback when the right arrow button is clicked
 local function OnTurnEditRightButtonClick()
-	print("TurnReminder: OnTurnEditRightButtonClick");
-	value = tonumber(Controls.TurnEditBox:GetText() or 0);
-	if value < 9999 then
-	  Controls.TurnEditBox:SetText(value + 1);
-	end
+  print("TurnReminder: OnTurnEditRightButtonClick");
+  value = tonumber(Controls.TurnEditBox:GetText() or 0);
+  if value < 9999 then
+    Controls.TurnEditBox:SetText(value + 1);
+  end
 end
 
 local function OnTurnEditBoxCommit()
-	print("TurnReminder: OnTurnEditBoxCommit");
-	value = tonumber(Controls.TurnEditBox:GetText() or 0);
-	if (value < 1) then
-		Controls.TurnEditBox:SetText("1");
-	end
+  print("TurnReminder: OnTurnEditBoxCommit");
+  value = tonumber(Controls.TurnEditBox:GetText() or 0);
+  if (value < 1) then
+    Controls.TurnEditBox:SetText("1");
+  end
 end
 
 --************************************************************
 -- Callback when the OK button in the Turn Reminder dialog is clicked
 local function OnAddTurnReminderButtonClick()
-	print("TurnReminder: OnAddTurnReminderButtonClick");
+  print("TurnReminder: OnAddTurnReminderButtonClick");
 
-	if (Controls.ReminderText:GetText() or "") == "" then
-		HideDialog()
-	else
-		AddUpcomingReminder(tonumber(Controls.TurnEditBox:GetText() or 0), Controls.ReminderText:GetText());
-		RefreshUpcomingReminders();
-		Controls.ReminderText:SetText("");
-	end
+  if (Controls.ReminderText:GetText() or "") == "" then
+    HideDialog()
+  else
+    AddUpcomingReminder(tonumber(Controls.TurnEditBox:GetText() or 0), Controls.ReminderText:GetText());
+    RefreshUpcomingReminders();
+    Controls.ReminderText:SetText("");
+  end
 end
 
 --************************************************************
@@ -221,58 +221,58 @@ end
 --************************************************************
 -- Callback of the load game UI event
 local function OnLoadGameViewStateDone()
-	print("TurnReminder: OnLoadGameViewStateDone");
-	AddButtonToTopPanel();
-	ContextPtr:SetHide(false);  -- TODO: What does this line do? It's very important
+  print("TurnReminder: OnLoadGameViewStateDone");
+  AddButtonToTopPanel();
+  ContextPtr:SetHide(false);  -- TODO: What does this line do? It's very important
 end
 
 --************************************************************
 -- Callback for keystrokes
 local function InputHandler(input:table)
-	if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
-		local key = input:GetKey();
-		print("TurnReminder: InputHandler(key = ", key, ")");
+  if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
+    local key = input:GetKey();
+    print("TurnReminder: InputHandler(key = ", key, ")");
 
-		if key == Keys.VK_ESCAPE then
-			OnTopPanelButtonClick();
-			return true;
+    if key == Keys.VK_ESCAPE then
+      OnTopPanelButtonClick();
+      return true;
     -- TODO: Try to get Enter to work consistently
-		--elseif key == 102 then
-			--OnAddTurnReminderButtonClick();
-			--return true;
-		end
-	end
-	-- TODO: Add a hotkey like this for opening the window.
-	--if key == 31  and input:IsAltDown() and not input:IsShiftDown()  and not input:IsControlDown() then
-		--OnTopPanelButtonClick();
-		--return true;
-	--end
+    --elseif key == 102 then
+      --OnAddTurnReminderButtonClick();
+      --return true;
+    end
+  end
+  -- TODO: Add a hotkey like this for opening the window.
+  --if key == 31  and input:IsAltDown() and not input:IsShiftDown()  and not input:IsControlDown() then
+    --OnTopPanelButtonClick();
+    --return true;
+  --end
 end
 
 local function OnPlayerTurnActivated(playerId, firstTime)
     if not firstTime then return end
-	print("OnPlayerTurnActivated("..playerId..")");  -- TODO: Remove
-	if playerId == Game.GetLocalPlayer() then
-		currentTurn = CurrentTurn();
-		print("OnPlayerTurnActivated(turn = "..currentTurn..")");
+  print("OnPlayerTurnActivated("..playerId..")");  -- TODO: Remove
+  if playerId == Game.GetLocalPlayer() then
+    currentTurn = CurrentTurn();
+    print("OnPlayerTurnActivated(turn = "..currentTurn..")");
 
-		reminders = 0;
-		for index, reminder in pairs(UpcomingReminders) do
-		  if reminder.Turn == currentTurn then
-		    reminders = reminders + 1;
+    reminders = 0;
+    for index, reminder in pairs(UpcomingReminders) do
+      if reminder.Turn == currentTurn then
+        reminders = reminders + 1;
 
-			local NotificationTurn          =  CurrentTurn()
-			notification = GetDefaultNotification(reminder.Id, reminder.Message, currentTurn);
+      local NotificationTurn          =  CurrentTurn()
+      notification = GetDefaultNotification(reminder.Id, reminder.Message, currentTurn);
             
-			print("SendingReminder");
-			LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
+      print("SendingReminder");
+      LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
 
-			UpcomingReminders[index] = nil
-		  end
-		end
-		print(tostring(reminders).." reminder(s)");
-		RefreshUpcomingReminders();
-	end
+      UpcomingReminders[index] = nil
+      end
+    end
+    print(tostring(reminders).." reminder(s)");
+    RefreshUpcomingReminders();
+  end
 end
 
 
