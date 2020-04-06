@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
+    <Name>Turn Reminder</Name>
+    <Guid>4fe21acd-8f08-4cfc-830d-c4b8589b1641</Guid>
+    <ProjectGuid>22fa70d7-df87-48d2-86c7-a5a6a01f5674</ProjectGuid>
+    <ModVersion>1</ModVersion>
+    <Teaser>Set custom reminders</Teaser>
+    <Description>Allows you to set reminders that trigger a notification on a specified future turn</Description>
+    <Authors>Isaac Supeene</Authors>
+    <SpecialThanks>
+    </SpecialThanks>
+    <AffectsSavedGames>false</AffectsSavedGames>
+    <SupportsSinglePlayer>true</SupportsSinglePlayer>
+    <SupportsMultiplayer>true</SupportsMultiplayer>
+    <SupportsHotSeat>true</SupportsHotSeat>
+    <CompatibleVersions>1.2,2.0</CompatibleVersions>
+    <AssemblyName>TurnReminder</AssemblyName>
+    <RootNamespace>TurnReminder</RootNamespace>
+    <InGameActionData><![CDATA[<InGameActions><AddUserInterfaces id="AddTurnReminderUI"><Properties><Context>InGame</Context><LoadOrder>14000</LoadOrder></Properties><File>TurnReminderUI.xml</File></AddUserInterfaces><UpdateText id="UpdateTurnReminderText"><Properties><LoadOrder>520</LoadOrder></Properties><File>TurnReminderText.xml</File></UpdateText><ImportFiles id="ImportTurnReminderFiles"><Properties><LoadOrder>400</LoadOrder></Properties><File>TurnReminderTopPanelButton.dds</File><File>NotificationPanel.lua</File></ImportFiles></InGameActions>]]></InGameActionData>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="NotificationPanel.lua">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="TurnReminderTopPanelButton.dds">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="TurnReminderText.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="TurnReminderUI.lua">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="TurnReminderUI.xml">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)Civ6.targets" />
+</Project>

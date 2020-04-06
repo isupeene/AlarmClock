@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TurnReminderText -->
+<!-- Author: Isaac Supeene -->
+<!-- DateCreated: 4/4/2020 1:38:07 PM -->
+<GameData>
+	<LocalizedText>
+		<Row Tag="LOC_TR_BTN_TT" Language="en_US">
+			<Text>Turn Reminder</Text>
+		</Row>
+    <Row Tag="LOC_TR_DLG_TITLE" Language="en_US">
+      <Text>Turn Reminder</Text>
+    </Row>
+    <Row Tag="LOC_TR_DLG_UPCOMING" Language="en_US">
+      <Text>Upcoming Reminders</Text>
+    </Row>
+    <Row Tag="LOC_TR_LBL_TURN_EDIT_LEFT" Language="en_US">
+      <Text>Remind me in </Text>
+    </Row>
+    <Row Tag="LOC_TR_LBL_TURN_EDIT_RIGHT" Language="en_US">
+      <Text> turns</Text>
+    </Row>
+    <Row Tag="LOC_TR_COLUMN_MESSAGE" Language="en_US">
+      <Text>Message</Text>
+    </Row>
+    <Row Tag="LOC_TR_COLUMN_DELETE" Language="en_US">
+      <Text>Delete</Text>
+    </Row>
+	</LocalizedText>
+</GameData>
