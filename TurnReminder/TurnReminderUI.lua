@@ -65,6 +65,19 @@ local function AddUpcomingReminder(turnsInFuture:number, message:string)
   NextId = NextId + 1;
 end
 
+-- Returns an iterator over t ordered by f, without modifying t.
+local function Sorted(t, f)
+  local sortedValues = {};
+  for key, value in pairs(t) do table.insert(sortedValues, {Key=key, Value=value}) end
+  table.sort(sortedValues, function(a, b) return f(a.Value, b.Value) end);
+  
+  local i = 0;
+  return function()
+    i = i + 1;
+    return sortedValues[i].Key, sortedValues[i].Value;
+  end
+end
+
 -----------------
 -- UI Mutators --
 -----------------
@@ -199,12 +212,11 @@ end
 -- Callback for keystrokes
 local function InputHandler(input:table)
   local key = input:GetKey();
-  -- TODO: Remove verbose print statements like this.
-  print("TurnReminder: InputHandler(key = ", key, ")");
   -- Note that we use KeyUp for the ESC key, since this is what the game is listening to.
   -- Handling this event prevents us from getting a double-ESC, and e.g. opening the game menu or
   -- closing some other window.
-  if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
+  if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp and key == Keys.VK_ESCAPE then
+    print("TurnReminder: InputHandler(ESC)");
     if key == Keys.VK_ESCAPE then
       HideDialog();
       return true;
@@ -216,6 +228,7 @@ local function InputHandler(input:table)
   end
 
   if input:GetMessageType() == KeyEvents.KeyDown and key == 18 and input:IsAltDown() and not input:IsShiftDown() and not input:IsControlDown() then
+    print("TurnReminder: InputHandler(Alt+R)");
     ToggleDialogVisibility();
     return true;
   end
@@ -227,7 +240,7 @@ local function OnPlayerTurnActivated(playerId, firstTime)
   local currentTurn = CurrentTurn();
   print("TurnReminder: OnPlayerTurnActivated(turn = "..currentTurn..")");
 
-  for index, reminder in pairs(UpcomingReminders) do
+  for index, reminder in Sorted(UpcomingReminders, function(a, b) return a.Id < b.Id end) do
     if reminder.Turn == currentTurn then
       local NotificationTurn = CurrentTurn()
       local notification = BuildNotification(reminder.Id, reminder.Message, currentTurn);

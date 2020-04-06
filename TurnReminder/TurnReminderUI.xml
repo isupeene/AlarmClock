@@ -34,6 +34,7 @@
     <!-- Button on the top panel  -->
 	  <Button ID="TurnReminderTopPanelButton" Size="29,29" Anchor="C,C" Texture="TurnReminderTopPanelButton.dds" ToolTip="LOC_TR_BTN_TT" ConsumeMouse="1"/>
 
+    <!-- TODO: Consider centering this? -->
     <Container	Size="700,135" ID="TurnReminderDialogContainer" Anchor="R,T"	AnchorSide="I,I"	Offset="530,130" ConsumeMouse="1" Hidden="1">
       <SlideAnim	Size="parent,parent"	ID="TurnReminderDialog_Collapse"	Begin="0,0" End="120,0"  Function="OutQuint" FunctionPower="1" Speed="2" Cycle="Once" Stopped="1">
         <SlideAnim	Size="parent,parent" ID="TurnReminderDialog_Expand"	Begin="0,0" End="-120,0" Function="OutQuint" FunctionPower="3" Speed="2" Cycle="Once" Stopped="1">
