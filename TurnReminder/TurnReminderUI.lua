@@ -12,55 +12,50 @@ local TopPanelButtonAdded = false;
 local UpcomingReminders:table = {};
 local NextId:number = 1;
 
-function GetDefaultNotification(id, message, turn)
-    local localPlayer                       = Game.GetLocalPlayer();
-    local DefaultNotification               = {};
+function BuildNotification(id, message, turn)
+    local notification = {};
 
-    DefaultNotification.IsCustom            = true
-    
-    DefaultNotification.GetTypeName         = function() return "NOTIFICATION_TURN_REMINDER"; end
-    DefaultNotification.GetPlayerID         = function() return localPlayer; end
-    DefaultNotification.GetID               = function() return id + 8192; end  -- Must be unique
-    DefaultNotification.GetGroup            = function() return NotificationGroups.NONE; end
-    DefaultNotification.GetIconName         = function() return "ICON_NOTIFICATION_GENERIC"; end
+    notification.GetID               = function() return id + 8192; end  -- Must be unique
+    notification.GetSummary          = function() return message; end -- Must not be nil
+    notification.GetAddTurn          = function() return turn; end -- Notification will be dismissed on the following turn
 
-    DefaultNotification.GetType             = function() return 888888; end -- 888888 is the default handler. 888889 will trigger the event specified by "GetEventOnActivate"
-    DefaultNotification.GetEndTurnBlocking  = function() return EndTurnBlockingTypes.NO_ENDTURN_BLOCKING; end
-    DefaultNotification.IsIconDisplayable   = function() return true; end
-    
-    DefaultNotification.IsValidForPhase     = function() return true; end
-    DefaultNotification.IsAutoNotify        = function() return false; end
-    DefaultNotification.GetMessage          = function() return "Turn Reminder"; end -- Must not be nil
-    DefaultNotification.GetSummary          = function() return message; end -- Must not be nil
-    
-    DefaultNotification.CanUserDismiss      = function() return true; end -- should always be true?
+    notification.IsCustom            = true
+    notification.GetTypeName         = function() return "NOTIFICATION_TURN_REMINDER"; end
+    notification.GetPlayerID         = function() return Game.GetLocalPlayer(); end
+    notification.GetMessage          = function() return "Turn Reminder"; end -- Must not be nil
+    notification.GetIconName         = function() return "ICON_NOTIFICATION_GENERIC"; end
+    notification.GetGroup            = function() return NotificationGroups.NONE; end
+    notification.GetType             = function() return 888888; end -- 888888 is the default handler. 888889 will trigger the event specified by "GetEventOnActivate"
+    notification.GetEndTurnBlocking  = function() return EndTurnBlockingTypes.NO_ENDTURN_BLOCKING; end
+    notification.IsVisibleInUI       = function() return true; end
+    notification.IsIconDisplayable   = function() return true; end
+    notification.IsValidForPhase     = function() return true; end
+    notification.IsAutoNotify        = function() return false; end
+    notification.CanUserDismiss      = function() return true; end
+    notification.Activate            = function(Boolean) end
+    notification.GetCount            = function() return 1; end
+    notification.EraseOnStartTurn    = true;
     
     -- Options to move the camera when the notification is activated
-    DefaultNotification.IsLocationValid     = function() return false; end -- if you want the notification to move the camera somewhere when clicked set true here
-    DefaultNotification.GetLocation         = function() return 0, 0; end -- and set plot X, Y here
-    DefaultNotification.IsTargetValid       = function() return false; end -- if you want the notification to select a city or a unit when clicked set true here, no need to give location if you give target
-    DefaultNotification.GetTarget           = function() return localPlayer, nil, nil; end -- PlayerId, EntityId, EntityType (PlayerComponentTypes.{UNIT|CITY}
-
-    DefaultNotification.IsVisibleInUI       = function() return true; end
-    DefaultNotification.Activate            = function(Boolean) end
-    DefaultNotification.GetCount            = function() return 1; end
-    DefaultNotification.GetAddTurn          = function() return turn; end -- Notification will be dismissed on the following turn
-    DefaultNotification.EraseOnStartTurn    = true;
+    notification.IsLocationValid     = function() return false; end -- if you want the notification to move the camera somewhere when clicked set true here
+    notification.GetLocation         = function() return 0, 0; end -- and set plot X, Y here
+    notification.IsTargetValid       = function() return false; end -- if you want the notification to select a city or a unit when clicked set true here, no need to give location if you give target
+    notification.GetTarget           = function() return Game.GetLocalPlayer(), nil, nil; end -- PlayerId, EntityId, EntityType (PlayerComponentTypes.{UNIT|CITY}
     
-  return DefaultNotification
+  return notification
 end
 
 local function AddButtonToTopPanel()
+  if TopPanelButtonAdded then return end
+
   print("TurnReminder: AddButtonToTopPanel");
-  if not TopPanelButtonAdded then
-    local tPanRightStack:table = ContextPtr:LookUpControl("/InGame/TopPanel/RightContents"); -- top panel right stack where clock civilopedia and menu is
-    if tPanRightStack ~= nil then
-      Controls.TurnReminderTopPanelButton:ChangeParent(tPanRightStack);
-      tPanRightStack:AddChildAtIndex(Controls.TurnReminderTopPanelButton, 3);
-      tPanRightStack:CalculateSize();
-      tPanRightStack:ReprocessAnchoring();
-      TopPanelButtonAdded = true;
-    end
+  local topPanel = ContextPtr:LookUpControl("/InGame/TopPanel/RightContents"); -- top panel right stack where clock civilopedia and menu is
+  if topPanel ~= nil then
+    Controls.TurnReminderTopPanelButton:ChangeParent(topPanel);
+    topPanel:AddChildAtIndex(Controls.TurnReminderTopPanelButton, 3);
+    topPanel:CalculateSize();
+    topPanel:ReprocessAnchoring();
+    TopPanelButtonAdded = true;
   end
 end
 
@@ -219,26 +214,20 @@ end
 
 local function OnPlayerTurnActivated(playerId, firstTime)
     if not firstTime then return end
-  print("OnPlayerTurnActivated("..playerId..")");  -- TODO: Remove
   if playerId == Game.GetLocalPlayer() then
     currentTurn = CurrentTurn();
     print("OnPlayerTurnActivated(turn = "..currentTurn..")");
 
-    reminders = 0;
     for index, reminder in pairs(UpcomingReminders) do
       if reminder.Turn == currentTurn then
-        reminders = reminders + 1;
-
-      local NotificationTurn          =  CurrentTurn()
-      notification = GetDefaultNotification(reminder.Id, reminder.Message, currentTurn);
+        local NotificationTurn          =  CurrentTurn()
+        notification = BuildNotification(reminder.Id, reminder.Message, currentTurn);
             
-      print("SendingReminder");
-      LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
+        LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
 
-      UpcomingReminders[index] = nil
+        UpcomingReminders[index] = nil
       end
     end
-    print(tostring(reminders).." reminder(s)");
     RefreshUpcomingReminders();
   end
 end
