@@ -130,6 +130,14 @@ local function RefreshUpcomingReminders()
   end
 end
 
+local function ToggleDialogVisibility()
+  if not Controls.TurnReminderDialogContainer:IsHidden() then
+    HideDialog();
+  else
+    ShowDialog();
+  end
+end
+
 ---------------
 -- Callbacks --
 ---------------
@@ -137,11 +145,7 @@ end
 -- The top panel button next to the CivPedia
 local function OnTopPanelButtonClick()
   print("TurnReminder: OnTopPanelButtonClick");
-  if not Controls.TurnReminderDialogContainer:IsHidden() then
-    HideDialog();
-  else
-    ShowDialog();
-  end
+  ToggleDialogVisibility()
 end
 
 -- The decrement arrow to the left of the TurnEditBox
@@ -194,12 +198,15 @@ end
 
 -- Callback for keystrokes
 local function InputHandler(input:table)
+  local key = input:GetKey();
+  -- TODO: Remove verbose print statements like this.
+  print("TurnReminder: InputHandler(key = ", key, ")");
+  -- Note that we use KeyUp for the ESC key, since this is what the game is listening to.
+  -- Handling this event prevents us from getting a double-ESC, and e.g. opening the game menu or
+  -- closing some other window.
   if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
-    local key = input:GetKey();
-    print("TurnReminder: InputHandler(key = ", key, ")");
-
     if key == Keys.VK_ESCAPE then
-      OnTopPanelButtonClick();
+      HideDialog();
       return true;
     -- TODO: Try to get Enter to work consistently
     --elseif key == 102 then
@@ -207,11 +214,11 @@ local function InputHandler(input:table)
       --return true;
     end
   end
-  -- TODO: Add a hotkey like this for opening the window.
-  --if key == 31  and input:IsAltDown() and not input:IsShiftDown()  and not input:IsControlDown() then
-    --OnTopPanelButtonClick();
-    --return true;
-  --end
+
+  if input:GetMessageType() == KeyEvents.KeyDown and key == 18 and input:IsAltDown() and not input:IsShiftDown() and not input:IsControlDown() then
+    ToggleDialogVisibility();
+    return true;
+  end
 end
 
 local function OnPlayerTurnActivated(playerId, firstTime)
@@ -232,6 +239,10 @@ local function OnPlayerTurnActivated(playerId, firstTime)
   end
   RefreshUpcomingReminders();
 end
+
+----------------
+-- Main Setup --
+----------------
 
 Events.LoadGameViewStateDone.Add(OnLoadGameViewStateDone);
 ContextPtr:SetInputHandler(InputHandler, true);
