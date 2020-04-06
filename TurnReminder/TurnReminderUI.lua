@@ -12,6 +12,10 @@ local TopPanelButtonAdded = false;
 local UpcomingReminders:table = {};
 local NextId:number = 1;
 
+---------------
+-- Utilities --
+---------------
+
 function BuildNotification(id, message, turn)
     local notification = {};
 
@@ -45,6 +49,26 @@ function BuildNotification(id, message, turn)
   return notification
 end
 
+-- Use the same code to get the current turn as in TopPanel.lua, to be consistent with the top panel turn counter
+local function CurrentTurn()
+  local currentTurn = Game.GetCurrentGameTurn();
+  if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_NORMALIZED_TURN") then
+    currentTurn = (currentTurn - GameConfiguration.GetStartTurn()) + 1; -- Keep turns starting at 1.
+  end
+  return currentTurn;
+end
+
+local function AddUpcomingReminder(turnsInFuture:number, message:string)
+  print("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
+
+  UpcomingReminders[tostring(NextId)] = {Turn = CurrentTurn() + turnsInFuture, Message = message, Id = NextId};
+  NextId = NextId + 1;
+end
+
+-----------------
+-- UI Mutators --
+-----------------
+
 local function AddButtonToTopPanel()
   if TopPanelButtonAdded then return end
 
@@ -69,22 +93,6 @@ end
 local function HideDialog()
   print("TurnReminder: HideDialog");
   Controls.TurnReminderDialogContainer:SetHide(true);
-end
-
--- Use the same code to get the current turn as in TopPanel.lua, to be consistent with the top panel turn counter
-local function CurrentTurn()
-  local currentTurn = Game.GetCurrentGameTurn();
-  if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_NORMALIZED_TURN") then
-    currentTurn = (currentTurn - GameConfiguration.GetStartTurn()) + 1; -- Keep turns starting at 1.
-  end
-  return currentTurn;
-end
-
-local function AddUpcomingReminder(turnsInFuture:number, message:string)
-  print("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
-
-  UpcomingReminders[tostring(NextId)] = {Turn = CurrentTurn() + turnsInFuture, Message = message, Id = NextId};
-  NextId = NextId + 1;
 end
 
 local function RefreshUpcomingReminders()
@@ -114,13 +122,11 @@ local function RefreshUpcomingReminders()
   Controls.UpcomingReminderRows:SortChildren(function(a, b) return a:GetTag() < b:GetTag() end);
 
   if next(UpcomingReminders) ~= nil then
-    print("There were upcoming reminders!");
     Controls.TurnReminderDialogContainer:SetSizeY(460);
     Controls.TurnReminderDialogUpcomingGrid:SetShow(true);
     Controls.UpcomingReminderHeaders:SetShow(true);
     Controls.UpcomingReminderRowsScrollPanel:SetShow(true);
   else
-    print("There were no upcoming reminders!");
     Controls.TurnReminderDialogContainer:SetSizeY(135);
     Controls.TurnReminderDialogUpcomingGrid:SetHide(true);
     Controls.UpcomingReminderHeaders:SetHide(true);
@@ -213,23 +219,22 @@ local function InputHandler(input:table)
 end
 
 local function OnPlayerTurnActivated(playerId, firstTime)
-    if not firstTime then return end
-  if playerId == Game.GetLocalPlayer() then
-    currentTurn = CurrentTurn();
-    print("OnPlayerTurnActivated(turn = "..currentTurn..")");
+  if not (firstTime and playerId == Game.GetLocalPlayer()) then return end
 
-    for index, reminder in pairs(UpcomingReminders) do
-      if reminder.Turn == currentTurn then
-        local NotificationTurn          =  CurrentTurn()
-        notification = BuildNotification(reminder.Id, reminder.Message, currentTurn);
+  currentTurn = CurrentTurn();
+  print("TurnReminder: OnPlayerTurnActivated(turn = "..currentTurn..")");
+
+  for index, reminder in pairs(UpcomingReminders) do
+    if reminder.Turn == currentTurn then
+      local NotificationTurn = CurrentTurn()
+      notification = BuildNotification(reminder.Id, reminder.Message, currentTurn);
             
-        LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
+      LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
 
-        UpcomingReminders[index] = nil
-      end
+      UpcomingReminders[index] = nil
     end
-    RefreshUpcomingReminders();
   end
+  RefreshUpcomingReminders();
 end
 
 Events.LoadGameViewStateDone.Add(OnLoadGameViewStateDone);
