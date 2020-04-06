@@ -4,7 +4,8 @@
 <!-- DateCreated: 4/4/2020 1:32:55 PM -->
 <Context Name="TurnReminderContext">
 
-  <!-- Note: Not real data binding. The $Name$ strings are just placeholders. (I think)-->
+  <!-- NOTE: Not real data binding. The $Name$ strings are just placeholders to make it obvious if you forgot to set them. -->
+  <!-- NOTE: The widths of these columns should be the same as the widths of the corresponding headers below. -->
   <Instance Name="UpcomingReminderInstance">
     <Container ID="Top" Offset="2,0" Size="parent-4,40">
       <Image Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
@@ -14,9 +15,9 @@
           <Label ID="Turn" Style="ReportValueText"	String="$Turn$" />
         </Container>
         <Box Size="2,parent"	Color="46,70,95,255" />
-        <Container  Size="parent-146,parent">
-          <!-- TODO: See if wrapping is required here. -->
-          <Label ID="Message" Style="ReportValueText"	String="$Message$"/>
+        <Container  Size="parent-146,parent" Anchor="L,C" Offset="10,0">
+          <!-- NOTE: This WrapWidth is very brittle, and will need to be readjusted if any other widths are changed. -->
+          <Label ID="Message" Anchor="L,C" Align="Left" Style="ReportValueText"	String="$Message$" WrapWidth="500"/>
         </Container>
         <Box Size="2,parent"	Color="46,70,95,255" />
         <Container Size="70,parent">
@@ -27,7 +28,7 @@
         <Box Size="2,parent"	Color="46,70,95,255" />
       </Stack>
     </Container>
-  </Instance><!-- UpcomingReminderInstance -->
+  </Instance> <!-- UpcomingReminderInstance -->
 
   <Container ID="TurnReminderContentContainer" Size="auto,auto" Anchor="R,T" Offset="0,0">
     <!-- Button on the top panel  -->
@@ -77,10 +78,11 @@
                     <Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_TURN"/>
                   </Container>
                   <Box Size="2,parent"	Color="46,70,95,255"/>
-                  <Container Size="parent-146,parent">
-                    <Label Style="ReportHeaderSmallText" String="LOC_TR_COLUMN_MESSAGE"/>
+                  <Container Size="parent-146,parent" Anchor="L,C" Offset="10,0">
+                    <!-- TODO: Left justify? -->
+                    <Label Anchor="L,C" Align="Left" Style="ReportHeaderSmallText" String="LOC_TR_COLUMN_MESSAGE"/>
                   </Container>
-                  <Box Size="2,parent"	Color="46,70,95,255"/>
+                  <Box Size="2,parent" Color="46,70,95,255"/>
                   <Container Size="70,parent">
                     <Label Style="ReportHeaderSmallText" String="LOC_TR_COLUMN_DELETE"/>
                   </Container>
