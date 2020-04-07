@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
-    <Name>AlarmClock</Name>
+    <Name>Alarm Clock</Name>
     <Guid>4fe21acd-8f08-4cfc-830d-c4b8589b1641</Guid>
     <ProjectGuid>22fa70d7-df87-48d2-86c7-a5a6a01f5674</ProjectGuid>
     <ModVersion>1</ModVersion>
