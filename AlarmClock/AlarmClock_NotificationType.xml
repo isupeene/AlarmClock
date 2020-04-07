@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AlarmClock_NotificationType -->
+<!-- Author: Isaac Supeene -->
+<!-- DateCreated: 4/7/2020 9:19:04 AM -->
+<GameInfo>
+  <Types>
+    <Row Type="NOTIFICATION_ALARM_CLOCK" Kind="KIND_NOTIFICATION"/>
+  </Types>
+  <Notifications>
+    <Row NotificationType="NOTIFICATION_ALARM_CLOCK" SeverityType="LOW"/>
+  </Notifications>
+</GameInfo>
+

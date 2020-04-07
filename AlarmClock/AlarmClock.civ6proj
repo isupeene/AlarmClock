@@ -18,22 +18,25 @@
     <CompatibleVersions>1.2,2.0</CompatibleVersions>
     <AssemblyName>AlarmClock</AssemblyName>
     <RootNamespace>AlarmClock</RootNamespace>
-    <InGameActionData><![CDATA[<InGameActions><AddUserInterfaces id="LoadAlarmClockUI"><Properties><Context>InGame</Context><LoadOrder>14000</LoadOrder></Properties><File>AlarmClockUI.xml</File></AddUserInterfaces><UpdateText id="LoadAlarmClockText"><Properties><LoadOrder>520</LoadOrder><Context>InGame</Context></Properties><File>AlarmClockText.xml</File></UpdateText><ImportFiles id="LoadAlarmClockIcon"><Properties><LoadOrder>400</LoadOrder><Context>InGame</Context></Properties><File>AlarmClockIcon.dds</File></ImportFiles></InGameActions>]]></InGameActionData>
+    <InGameActionData><![CDATA[<InGameActions><AddUserInterfaces id="LoadAlarmClockUI"><Properties><Context>InGame</Context><LoadOrder>14000</LoadOrder></Properties><File>AlarmClock_UI.xml</File></AddUserInterfaces><UpdateText id="LoadAlarmClockText"><Properties><Context>InGame</Context><LoadOrder>400</LoadOrder></Properties><File>AlarmClock_Text.xml</File></UpdateText><ImportFiles id="LoadAlarmClockIcon"><Properties><Context>InGame</Context><LoadOrder>400</LoadOrder></Properties><File>AlarmClock_Icon.dds</File></ImportFiles><UpdateDatabase id="LoadAlarmClockNotificationType"><Properties><Context>InGame</Context><LoadOrder>400</LoadOrder></Properties><File>AlarmClock_NotificationType.xml</File></UpdateDatabase></InGameActions>]]></InGameActionData>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
     <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="AlarmClockIcon.dds">
+    <Content Include="AlarmClock_Icon.dds">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="AlarmClockText.xml">
+    <Content Include="AlarmClock_NotificationType.xml">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="AlarmClockUI.lua">
+    <Content Include="AlarmClock_Text.xml">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="AlarmClockUI.xml">
+    <Content Include="AlarmClock_UI.lua">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="AlarmClock_UI.xml">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

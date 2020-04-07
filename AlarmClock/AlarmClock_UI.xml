@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AlarmClock_UI -->
+<!-- Author: Isaac Supeene -->
+<!-- DateCreated: 4/4/2020 1:32:55 PM -->
+<Context Name="AlarmClockContext">
+
+  <!-- NOTE: Not real data binding. The $Name$ strings are just placeholders to make it obvious if you forgot to set them. -->
+  <!-- NOTE: The widths of these columns should be the same as the widths of the corresponding headers below. -->
+  <Instance Name="UpcomingAlarmInstance">
+    <Container ID="AlarmRowContainer" Offset="3,0" Size="parent-4,40">
+      <Image Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+      <Stack ID="AlarmRow" StackGrowth="Right">
+        <Box Size="2,parent" Color="46,70,95,128" />
+        <Container ID="AlarmColumnTurn" Size="70,parent">
+          <Label ID="Turn" Style="ReportValueText" String="$Turn$" />
+        </Container>
+        <Box Size="2,parent" Color="46,70,95,255" />
+        <Container Size="parent-146,parent" Anchor="L,C" Offset="10,0">
+          <!-- NOTE: This WrapWidth is very brittle, and will need to be readjusted if any other widths are changed. -->
+          <Label ID="Message" Anchor="L,C" Align="Left" Style="ReportValueText" String="$Message$" WrapWidth="500"/>
+        </Container>
+        <Box Size="2,parent" Color="46,70,95,255" />
+        <Container Size="60,parent">
+          <GridButton ID="TrashButton" Size="32,32" Anchor="C,C" Texture="QueueSlot_Button" SliceCorner="20,23" SliceSize="2,2" SliceTextureSize="42,48" StateOffsetIncrement="0,48">
+            <Image Size="parent,parent" Texture="QueueTrash"/>
+          </GridButton>
+        </Container>
+        <Box Size="2,parent" Offset="0,0" Color="46,70,95,255" />
+      </Stack>
+    </Container>
+  </Instance> <!-- UpcomingAlarmInstance -->
+
+  <!-- Button on the top panel -->
+  <Button ID="AlarmClockTopPanelButton" Size="29,29" Anchor="C,C" Texture="AlarmClock_Icon.dds" ToolTip="LOC_AC_BTN_TT" ConsumeMouse="1"/>
+
+  <Container ID="AlarmClockContentContainer" Size="700,460" Anchor="C,C">
+    <Container Size="700,135" ID="AlarmClockDialogContainer" Anchor="C,T" ConsumeMouse="1" Hidden="1">
+      <SlideAnim Size="parent,parent" ID="AlarmClockDialog_Collapse" Begin="0,0" End="120,0" Function="OutQuint" FunctionPower="1" Speed="2" Cycle="Once" Stopped="1">
+        <SlideAnim Size="parent,parent" ID="AlarmClockDialog_Expand" Begin="0,0" End="-120,0" Function="OutQuint" FunctionPower="3" Speed="2" Cycle="Once" Stopped="1">
+          <Grid ID="AlarmClockDialogContext" Anchor="C,T" Texture="Controls_PanelBlue" Size="parent,parent" Style="CityPanelSlotGrid" ConsumeMouse="1" Hidden="0" SliceCorner="25,28" SliceSize="33,18" SliceTextureSize="83,75" >
+            <Stack ID="AlarmClockDialogStack" Anchor="C,T" Size="parent-40,auto" StackGrowth="Bottom" StackPadding="3">
+              <Grid Anchor="C,C" Offset="0,10" Size="parent,24" Style="CityPanelSlotGrid">
+                <Label ID="AlarmClockDialogTitle" Anchor="C,C" String="LOC_AC_DLG_TITLE" Style="PanelHeaderText" FontStyle="stroke" ColorSet="BodyTextBright"/>
+              </Grid>
+
+              <Grid ID="TurnCounterAndConfirmGrid" Anchor="C,T" Size="parent-6, 40">
+                <Stack ID="TurnCounterBox" Anchor="L,B" StackGrowth="Right" StackPadding="5" Style="CityPanelSlotGrid">
+                  <Label ID="TurnEditLabel" Anchor="L,B" String="LOC_AC_LBL_TURN_EDIT_LEFT" Style="DiplomacyCivHeader" FontStyle="stroke" ColorSet="BodyTextBright"/>
+                  <Button ID="TurnEditLeftButton" Anchor="C,B" Style="ArrowButtonLeft"/>
+                  <Grid Anchor="C,B" Texture="Controls_TextArea" SliceTextureSize="22,22" SliceCorner="11,20" Size="60,24">
+                    <EditBox ID="TurnEditBox" Style="FontNormalBold16" FontStyle="Stroke" String="1" NumberInput="1" EditMode="1" KeepFocus="1" Offset="10,0" Size="parent,parent" Anchor="C,C" MaxLength="4" ConsumeMouse="1" HighlightColor="25,120,154,200"/>
+                  </Grid>
+                  <Button ID="TurnEditRightButton" Style="ArrowButtonRight"/>
+                  <Label ID="TurnEditLabel" Anchor="C,B" String="LOC_AC_LBL_TURN_EDIT_RIGHT" Style="DiplomacyCivHeader" FontStyle="stroke" ColorSet="BodyTextBright"/>
+                </Stack>
+                <GridButton ID="AddAlarmClockButton" Anchor="R,C" Size="150,40" Style="MainButton" FontStyle="Shadow" String="LOC_OK_BUTTON" />
+              </Grid>
+              
+              <Grid ID="AlarmTextFrame" Style="EditTextButton" Anchor="C,T" Size="parent,26" Offset="0,10">
+                <EditBox ID="AlarmText" Style="EditTextArea" Size="parent-34,22" Anchor="R,C" MaxLength="80" KeepFocus="1"/>
+              </Grid>
+              
+              <Stack ID="UpcomingAlarmsStack" Size="parent,300" Hidden="1"> <!-- Stack-within-a-stack. Only function is to control the Hidden state of this whole group. -->
+                <Grid ID="AlarmClockDialogUpcomingGrid" Anchor="C,C" Offset="0,10" Size="parent,24" Style="CityPanelSlotGrid">
+                  <Label ID="AlarmClockDialogUpcoming" Anchor="C,C" String="LOC_AC_DLG_UPCOMING" Style="PanelHeaderText" FontStyle="stroke" ColorSet="BodyTextBright"/>
+                </Grid>
+                <Container ID="UpcomingAlarmHeaders" Offset="2,10" Size="parent-4,22">
+                  <Image Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
+                  <Stack StackGrowth="Right">
+                    <Box Size="2,parent" Color="46,70,95,128"/>
+                    <Container Offset="1,0" Size="70,parent">
+                      <Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_TURN"/>
+                    </Container>
+                    <Box Size="2,parent" Color="46,70,95,255"/>
+                    <Container Size="parent-146,parent" Anchor="L,C" Offset="10,0">
+                      <Label Anchor="L,C" Align="Left" Style="ReportHeaderSmallText" String="LOC_AC_COLUMN_MESSAGE"/>
+                    </Container>
+                    <Box Size="2,parent" Color="46,70,95,255"/>
+                    <Container Size="60,parent">
+                      <Label Style="ReportHeaderSmallText" String="LOC_AC_COLUMN_DELETE"/>
+                    </Container>
+                    <Box Offset="0,0" Size="2,parent" Color="46,70,95,255"/>
+                  </Stack>
+                </Container>
+                <ScrollPanel ID="UpcomingAlarmRowsScrollPanel" Size="parent,250" Vertical="1">
+                  <Stack ID="UpcomingAlarmRows"/>
+                </ScrollPanel>
+              </Stack> <!-- UpcomingAlarmsStack -->
+              
+            </Stack> <!-- AlarmClockDialogStack-->
+          </Grid> <!-- AlarmClockDialogContext -->
+        </SlideAnim> <!-- AlarmClockDialog_Expand -->
+      </SlideAnim> <!-- AlarmClockDialog_Collapse -->
+    </Container> <!-- AlarmClockDialogContainer -->
+  </Container> <!-- AlarmClockContentContainer -->
+</Context>
