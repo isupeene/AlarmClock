@@ -1,5 +1,5 @@
 A simple Alarm Clock mod for Civ VI.  
-Subscribe to the latest version on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2052074567)
+Subscribe to the latest version on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2052074567).
 
 #### Capabilities
 * A new button is added in the top-right panel next to the Civilopedia. This button opens the Alarm Clock dialog.
