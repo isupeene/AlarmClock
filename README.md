@@ -1,6 +1,7 @@
 A simple Alarm Clock mod for Civ VI.
 
 #### Capabilities
+* A new button is added in the top-right panel next to the Civilopedia. This button opens the Alarm Clock dialog.
 * Set an alarm for Δt turns in the future with a custom message. On turn t + Δt, you will receive a notification containing your message.
 * A single alarm can be set per future turn.
 * You can view and delete upcoming alarms in the grid view, which appears in the dialog after you've added an alarm.
@@ -14,6 +15,3 @@ A simple Alarm Clock mod for Civ VI.
 #### Known Issues
 * Alt-R does not close the window while an EditBox has focus, since the EditBox captures the keystroke.
 * Activating the notification pans the camera. There's likely a way to disable panning by passing more arguments to NotificationManager.SendNotification, but most modders don't even know that function exists, much less what its signature is, since it's never called from Lua in the game's code.
-
-#### Compatibility
-* The notification is given type NotificationTypes.USER_DEFINED_1.  Other mods sending custom notifications of the same type may not integrate well.
