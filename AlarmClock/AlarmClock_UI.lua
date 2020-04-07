@@ -220,7 +220,7 @@ local function OnPlayerTurnActivated(playerId, firstTime)
   Verbose("AlarmClock: OnPlayerTurnActivated(turn = "..currentTurn..")");
 
   if UpcomingAlarms[currentTurn] then
-    NotificationManager.SendNotification(playerId, "NOTIFICATION_ALARM_CLOCK", "LOC_AC_NOTIF_MSG", UpcomingAlarms[currentTurn], currentTurn);
+    NotificationManager.SendNotification(playerId, "NOTIFICATION_ALARM_CLOCK", "LOC_ALARM_CLOCK_NOTIF_MSG", UpcomingAlarms[currentTurn], currentTurn);
     UpcomingAlarms[currentTurn] = nil;
   end
   RefreshUpcomingAlarms();
