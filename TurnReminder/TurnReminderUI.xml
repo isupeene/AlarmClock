@@ -35,7 +35,6 @@
 
   <Container ID="TurnReminderContentContainer" Size="700,460" Anchor="C,C">
 
-    <!-- TODO: Consider centering this? -->
     <Container Size="700,135" ID="TurnReminderDialogContainer" Anchor="C,T" ConsumeMouse="1" Hidden="1">
       <SlideAnim Size="parent,parent" ID="TurnReminderDialog_Collapse" Begin="0,0" End="120,0" Function="OutQuint" FunctionPower="1" Speed="2" Cycle="Once" Stopped="1">
         <SlideAnim Size="parent,parent" ID="TurnReminderDialog_Expand" Begin="0,0" End="-120,0" Function="OutQuint" FunctionPower="3" Speed="2" Cycle="Once" Stopped="1">
@@ -59,7 +58,6 @@
               </Grid>
               
               <Grid ID="ReminderTextFrame" Style="EditTextButton" Anchor="C,T" Size="parent,26" Offset="0,10">
-                <!--<EditBox ID="ReminderText" Style="Civilopedia_SearchEditBox" CallOnChar="1" />-->
                 <EditBox ID="ReminderText" Style="EditTextArea" Size="parent-34,22" Anchor="R,C" MaxLength="80" KeepFocus="1"/>
               </Grid>
               
