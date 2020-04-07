@@ -18,7 +18,7 @@
     <CompatibleVersions>1.2,2.0</CompatibleVersions>
     <AssemblyName>TurnReminder</AssemblyName>
     <RootNamespace>TurnReminder</RootNamespace>
-    <InGameActionData><![CDATA[<InGameActions><AddUserInterfaces id="AddTurnReminderUI"><Properties><Context>InGame</Context><LoadOrder>14000</LoadOrder></Properties><File>TurnReminderUI.xml</File></AddUserInterfaces><UpdateText id="UpdateTurnReminderText"><Properties><LoadOrder>520</LoadOrder></Properties><File>TurnReminderText.xml</File></UpdateText><ImportFiles id="ImportTurnReminderFiles"><Properties><LoadOrder>400</LoadOrder></Properties><File>TurnReminderTopPanelButton.dds</File><File>NotificationPanel.lua</File></ImportFiles></InGameActions>]]></InGameActionData>
+    <InGameActionData><![CDATA[<InGameActions><AddUserInterfaces id="AddTurnReminderUI"><Properties><Context>InGame</Context><LoadOrder>14000</LoadOrder></Properties><File>TurnReminderUI.xml</File></AddUserInterfaces><UpdateText id="UpdateTurnReminderText"><Properties><LoadOrder>520</LoadOrder><Context>InGame</Context></Properties><File>TurnReminderText.xml</File></UpdateText><ImportFiles id="ImportTurnReminderFiles"><Properties><LoadOrder>400</LoadOrder><Context>InGame</Context></Properties><File>TurnReminderTopPanelButton.dds</File><File>NotificationPanel.lua</File></ImportFiles></InGameActions>]]></InGameActionData>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Default' ">
     <OutputPath>.</OutputPath>
