@@ -1,14 +1,15 @@
 A simple Alarm Clock mod for Civ VI.
 
 #### Capabilities
-* Set a reminder for Δt turns in the future with a custom message. On turn t + Δt, you will receive a notification containing your message.
-* A single reminder can be set per turn.
-* You can view and delete upcoming reminders in the grid view, which appears in the dialog when there are upcoming reminders.
+* Set an alarm for Δt turns in the future with a custom message. On turn t + Δt, you will receive a notification containing your message.
+* A single alarm can be set per future turn.
+* You can view and delete upcoming alarms in the grid view, which appears in the dialog after you've added an alarm.
+* Upcoming alarms are **not** saved when the game is closed. You'll have to pull out a good old-fashioned paper and pencil if you want to save reminders between sessions!
 
 #### Keyboard Shortcuts
 * Alt-R: toggle dialog
 * ESC: close dialog
-* Enter: confirm message, or close dialog if message is blank
+* Enter: confirm alarm, or close dialog if message is blank
 
 #### Known Issues
 * Alt-R does not close the window while an EditBox has focus, since the EditBox captures the keystroke.

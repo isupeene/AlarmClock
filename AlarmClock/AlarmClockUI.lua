@@ -1,4 +1,4 @@
--- TurnReminderUI
+-- AlarmClockUI
 -- Author: Isaac
 -- DateCreated: 4/4/2020 1:53:04 PM
 --------------------------------------------------------------
@@ -11,7 +11,7 @@ Verbose("Start Initialization");
 
 include("InstanceManager");  -- TODO: Does this do anything?
 
-local UpcomingReminders = {};
+local UpcomingAlarms = {};
 
 ---------------
 -- Utilities --
@@ -40,9 +40,9 @@ local function Sorted(t, f)
   end
 end
 
-local function AddUpcomingReminder(turnsInFuture:number, message:string)
-  Verbose("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
-  UpcomingReminders[tostring(CurrentTurn() + turnsInFuture)] = message;  -- TODO: Is tostring needed here?
+local function AddUpcomingAlarm(turnsInFuture:number, message:string)
+  Verbose("AlarmClock: AddUpcomingAlarm(", turnsInFuture, ", ", message, ")");
+  UpcomingAlarms[tostring(CurrentTurn() + turnsInFuture)] = message;  -- TODO: Is tostring needed here?
 end
 
 -----------------
@@ -53,11 +53,11 @@ local TopPanelButtonAdded = false; -- TODO: Is this needed?
 local function AddButtonToTopPanel()
   if TopPanelButtonAdded then return end
 
-  Verbose("TurnReminder: AddButtonToTopPanel");
+  Verbose("AlarmClock: AddButtonToTopPanel");
   local topPanel = ContextPtr:LookUpControl("/InGame/TopPanel/RightContents"); -- top panel right stack where clock civilopedia and menu is
   if topPanel ~= nil then
-    Controls.TurnReminderTopPanelButton:ChangeParent(topPanel);
-    topPanel:AddChildAtIndex(Controls.TurnReminderTopPanelButton, 3);
+    Controls.AlarmClockTopPanelButton:ChangeParent(topPanel);
+    topPanel:AddChildAtIndex(Controls.AlarmClockTopPanelButton, 3);
     topPanel:CalculateSize();
     topPanel:ReprocessAnchoring();
     TopPanelButtonAdded = true;
@@ -65,58 +65,58 @@ local function AddButtonToTopPanel()
 end
 
 local function ShowDialog()
-  Verbose("TurnReminder: ShowDialog");
+  Verbose("AlarmClock: ShowDialog");
   Controls.TurnEditBox:SetText("1");
-  Controls.ReminderText:SetText("");
-  Controls.TurnReminderDialogContainer:SetHide(false);
+  Controls.AlarmText:SetText("");
+  Controls.AlarmClockDialogContainer:SetHide(false);
 
-  Controls.ReminderText:TakeFocus();
+  Controls.AlarmText:TakeFocus();
 end
 
 local function HideDialog()
-  Verbose("TurnReminder: HideDialog");
-  Controls.TurnReminderDialogContainer:SetHide(true);
-  Controls.ReminderText:DropFocus();
+  Verbose("AlarmClock: HideDialog");
+  Controls.AlarmClockDialogContainer:SetHide(true);
+  Controls.AlarmText:DropFocus();
 end
 
-local function RefreshUpcomingReminders()
-  Verbose("TurnReminder: RefreshUpcomingReminders");
+local function RefreshUpcomingAlarms()
+  Verbose("AlarmClock: RefreshUpcomingAlarms");
 
-  Controls.UpcomingReminderRows:DestroyAllChildren()
+  Controls.UpcomingAlarmRows:DestroyAllChildren()
   
-  for turn, message in pairs(UpcomingReminders) do
-    local reminderInstance = {}
-    ContextPtr:BuildInstanceForControl("UpcomingReminderInstance", reminderInstance, Controls.UpcomingReminderRows);
-    reminderInstance.Turn:SetText(turn);
-    reminderInstance.Message:SetText(message);
+  for turn, message in pairs(UpcomingAlarms) do
+    local alarmInstance = {}
+    ContextPtr:BuildInstanceForControl("UpcomingAlarmInstance", alarmInstance, Controls.UpcomingAlarmRows);
+    alarmInstance.Turn:SetText(turn);
+    alarmInstance.Message:SetText(message);
     
-    Controls.UpcomingReminderRows:GetChildren()[Controls.UpcomingReminderRows:GetNumChildren()]:SetTag(tonumber(turn));
+    Controls.UpcomingAlarmRows:GetChildren()[Controls.UpcomingAlarmRows:GetNumChildren()]:SetTag(tonumber(turn));
 
-    reminderInstance.TrashButton:RegisterCallback(
+    alarmInstance.TrashButton:RegisterCallback(
       Mouse.eLClick,
       function()
-        Verbose("TurnReminder: TrashButtonCallback(" .. turn .. ")");
-        UpcomingReminders[turn] = nil;
-        RefreshUpcomingReminders();
+        Verbose("AlarmClock: TrashButtonCallback(" .. turn .. ")");
+        UpcomingAlarms[turn] = nil;
+        RefreshUpcomingAlarms();
       end
     );
   end
   
   -- Roundabout way of sorting the rows by turn number, since it's not clear how to access the actual value.  TODO: Figure out?
-  Controls.UpcomingReminderRows:SortChildren(function(a, b) return a:GetTag() < b:GetTag() end);
+  Controls.UpcomingAlarmRows:SortChildren(function(a, b) return a:GetTag() < b:GetTag() end);
 
-  if next(UpcomingReminders) ~= nil then
-    Controls.TurnReminderDialogContainer:SetSizeY(460);
-    Controls.UpcomingRemindersStack:SetShow(true);
+  if next(UpcomingAlarms) ~= nil then
+    Controls.AlarmClockDialogContainer:SetSizeY(460);
+    Controls.UpcomingAlarmsStack:SetShow(true);
   else
-    Controls.TurnReminderDialogContainer:SetSizeY(135);
-    Controls.UpcomingRemindersStack:SetHide(true);
+    Controls.AlarmClockDialogContainer:SetSizeY(135);
+    Controls.UpcomingAlarmsStack:SetHide(true);
   end
 end
 
 local function ToggleDialogVisibility()
-  Verbose("TurnReminder: ToggleDialogVisibility");
-  if not Controls.TurnReminderDialogContainer:IsHidden() then
+  Verbose("AlarmClock: ToggleDialogVisibility");
+  if not Controls.AlarmClockDialogContainer:IsHidden() then
     HideDialog();
   else
     ShowDialog();
@@ -124,11 +124,11 @@ local function ToggleDialogVisibility()
 end
 
 local function CommitEntry()
-  Verbose("TurnReminder: CommitEntry");
+  Verbose("AlarmClock: CommitEntry");
 
-  AddUpcomingReminder(tonumber(Controls.TurnEditBox:GetText() or 0), Controls.ReminderText:GetText());
-  RefreshUpcomingReminders();
-  Controls.ReminderText:SetText("");
+  AddUpcomingAlarm(tonumber(Controls.TurnEditBox:GetText() or 0), Controls.AlarmText:GetText());
+  RefreshUpcomingAlarms();
+  Controls.AlarmText:SetText("");
 end
 
 ---------------
@@ -136,60 +136,60 @@ end
 ---------------
 
 -- The OK button on the right of the dialog
-local function OnAddTurnReminderButtonClick()
-  Verbose("TurnReminder: OnAddTurnReminderButtonClick");
+local function OnAddAlarmClockButtonClick()
+  Verbose("AlarmClock: OnAddAlarmClockButtonClick");
 
-  if (Controls.ReminderText:GetText() or "") == "" then
+  if (Controls.AlarmText:GetText() or "") == "" then
     HideDialog();
   else
     CommitEntry();
-    Controls.ReminderText:TakeFocus();
+    Controls.AlarmText:TakeFocus();
   end
 end
 
 -- The top panel button next to the CivPedia
 local function OnTopPanelButtonClick()
-  Verbose("TurnReminder: OnTopPanelButtonClick");
+  Verbose("AlarmClock: OnTopPanelButtonClick");
   ToggleDialogVisibility()
 end
 
 -- The decrement arrow to the left of the TurnEditBox
 local function OnTurnEditLeftButtonClick()
-  Verbose("TurnReminder: OnTurnEditLeftButtonClick");
+  Verbose("AlarmClock: OnTurnEditLeftButtonClick");
   local value = tonumber(Controls.TurnEditBox:GetText() or 0);
   if value > 1 then
     Controls.TurnEditBox:SetText(value - 1);
   end
-  Controls.ReminderText:TakeFocus();
+  Controls.AlarmText:TakeFocus();
 end
 
 -- The increment arrow to the right of the TurnEditBox
 local function OnTurnEditRightButtonClick()
-  Verbose("TurnReminder: OnTurnEditRightButtonClick");
+  Verbose("AlarmClock: OnTurnEditRightButtonClick");
   local value = tonumber(Controls.TurnEditBox:GetText() or 0);
   if value < 9999 then
     Controls.TurnEditBox:SetText(value + 1);
   end
-  Controls.ReminderText:TakeFocus();
+  Controls.AlarmText:TakeFocus();
 end
 
--- The box that specifies the number of turns in the future to set the reminder
+-- The box that specifies the number of turns in the future to trigger the alarm
 local function OnTurnEditBoxCommit()
-  Verbose("TurnReminder: OnTurnEditBoxCommit");
+  Verbose("AlarmClock: OnTurnEditBoxCommit");
   local value = tonumber(Controls.TurnEditBox:GetText() or 0);
   if (value < 1) then
     Controls.TurnEditBox:SetText("1");
   end
 end
 
-local function OnReminderTextCommit()
-  Verbose("TurnReminder: OnReminderTextCommit");
-  OnAddTurnReminderButtonClick();
+local function OnAlarmTextCommit()
+  Verbose("AlarmClock: OnAlarmTextCommit");
+  OnAddAlarmClockButtonClick();
 end
 
 -- Callback when we load into the game for the first time
 local function OnLoadGameViewStateDone()
-  Verbose("TurnReminder: OnLoadGameViewStateDone");
+  Verbose("AlarmClock: OnLoadGameViewStateDone");
   AddButtonToTopPanel();
   ContextPtr:SetHide(false);
 end
@@ -200,20 +200,20 @@ local function InputHandler(input:table)
   -- Note that we use KeyUp for the ESC and Enter keys, since this is what the game is listening to.
   -- Handling KeyUp prevents us from getting a double-input, and e.g. opening the game menu or
   -- progressing to the next turn.
-  if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
+  if not Controls.AlarmClockDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
     if key == Keys.VK_ESCAPE then
-      Verbose("TurnReminder: InputHandler(ESC)");
+      Verbose("AlarmClock: InputHandler(ESC)");
       HideDialog();
       return true;
     elseif key == 102 then
-      Verbose("TurnReminder: InputHandler(Enter)");
-      OnAddTurnReminderButtonClick();
+      Verbose("AlarmClock: InputHandler(Enter)");
+      OnAddAlarmClockButtonClick();
       return true;
     end
   end
 
   if input:GetMessageType() == KeyEvents.KeyDown and key == 18 and input:IsAltDown() and not input:IsShiftDown() and not input:IsControlDown() then
-    Verbose("TurnReminder: InputHandler(Alt+R)");
+    Verbose("AlarmClock: InputHandler(Alt+R)");
     ToggleDialogVisibility();
     return true;
   end
@@ -223,13 +223,13 @@ local function OnPlayerTurnActivated(playerId, firstTime)
   if not (firstTime and playerId == Game.GetLocalPlayer()) then return end
 
   local currentTurn = tostring(CurrentTurn());
-  Verbose("TurnReminder: OnPlayerTurnActivated(turn = "..currentTurn..")");
+  Verbose("AlarmClock: OnPlayerTurnActivated(turn = "..currentTurn..")");
 
-  if UpcomingReminders[currentTurn] then
-    NotificationManager.SendNotification(playerId, NotificationTypes.USER_DEFINED_1, "LOC_TR_NOTIF_MSG", UpcomingReminders[currentTurn]);
-     UpcomingReminders[currentTurn] = nil;
+  if UpcomingAlarms[currentTurn] then
+    NotificationManager.SendNotification(playerId, NotificationTypes.USER_DEFINED_1, "LOC_AC_NOTIF_MSG", UpcomingAlarms[currentTurn]);
+     UpcomingAlarms[currentTurn] = nil;
   end
-  RefreshUpcomingReminders();
+  RefreshUpcomingAlarms();
 end
 
 ----------------
@@ -239,12 +239,12 @@ end
 Events.LoadGameViewStateDone.Add(OnLoadGameViewStateDone);
 ContextPtr:SetInputHandler(InputHandler, true);
 
-Controls.TurnReminderTopPanelButton:RegisterCallback(Mouse.eLClick, OnTopPanelButtonClick);
+Controls.AlarmClockTopPanelButton:RegisterCallback(Mouse.eLClick, OnTopPanelButtonClick);
 Controls.TurnEditLeftButton:RegisterCallback(Mouse.eLClick, OnTurnEditLeftButtonClick);
 Controls.TurnEditRightButton:RegisterCallback(Mouse.eLClick, OnTurnEditRightButtonClick);
-Controls.AddTurnReminderButton:RegisterCallback(Mouse.eLClick, OnAddTurnReminderButtonClick);
+Controls.AddAlarmClockButton:RegisterCallback(Mouse.eLClick, OnAddAlarmClockButtonClick);
 Controls.TurnEditBox:RegisterCommitCallback(OnTurnEditBoxCommit);
-Controls.ReminderText:RegisterCommitCallback(OnReminderTextCommit);
+Controls.AlarmText:RegisterCommitCallback(OnAlarmTextCommit);
 
 Events.PlayerTurnActivated.Add(OnPlayerTurnActivated);
 

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # ModBuddy Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "TurnReminder", "TurnReminder\TurnReminder.civ6proj", "{22FA70D7-DF87-48D2-86C7-A5A6A01F5674}"
+Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "AlarmClock", "AlarmClock\AlarmClock.civ6proj", "{22FA70D7-DF87-48D2-86C7-A5A6A01F5674}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
