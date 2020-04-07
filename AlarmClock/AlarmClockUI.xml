@@ -7,11 +7,11 @@
   <!-- NOTE: Not real data binding. The $Name$ strings are just placeholders to make it obvious if you forgot to set them. -->
   <!-- NOTE: The widths of these columns should be the same as the widths of the corresponding headers below. -->
   <Instance Name="UpcomingAlarmInstance">
-    <Container ID="Top" Offset="3,0" Size="parent-4,40">
+    <Container ID="AlarmRowContainer" Offset="3,0" Size="parent-4,40">
       <Image Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
-      <Stack StackGrowth="Right">
+      <Stack ID="AlarmRow" StackGrowth="Right">
         <Box Size="2,parent" Color="46,70,95,128" />
-        <Container Size="70,parent">
+        <Container ID="AlarmColumnTurn" Size="70,parent">
           <Label ID="Turn" Style="ReportValueText" String="$Turn$" />
         </Container>
         <Box Size="2,parent" Color="46,70,95,255" />

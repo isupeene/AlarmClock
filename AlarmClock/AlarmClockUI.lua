@@ -1,5 +1,5 @@
 -- AlarmClockUI
--- Author: Isaac
+-- Author: Isaac Supeene
 -- DateCreated: 4/4/2020 1:53:04 PM
 --------------------------------------------------------------
 
@@ -8,8 +8,6 @@ local function Verbose(message)
 end
 
 Verbose("Start Initialization");
-
-include("InstanceManager");  -- TODO: Does this do anything?
 
 local UpcomingAlarms = {};
 
@@ -26,42 +24,41 @@ local function CurrentTurn()
   return currentTurn;
 end
 
--- Returns an iterator over t ordered by f, without modifying t.
-local function Sorted(t, f)
-  local sortedValues = {};
-  for key, value in pairs(t) do table.insert(sortedValues, {Key=key, Value=value}) end
-  table.sort(sortedValues, function(a, b) return f(a.Value, b.Value) end);
-  
-  local i = 0;
-  return function()
-    i = i + 1;
-    if sortedValues[i] == nil then return nil end
-    return sortedValues[i].Key, sortedValues[i].Value;
-  end
-end
-
 local function AddUpcomingAlarm(turnsInFuture:number, message:string)
   Verbose("AlarmClock: AddUpcomingAlarm(", turnsInFuture, ", ", message, ")");
-  UpcomingAlarms[tostring(CurrentTurn() + turnsInFuture)] = message;  -- TODO: Is tostring needed here?
+  UpcomingAlarms[CurrentTurn() + turnsInFuture] = message;
+end
+
+local function ChildById(parent, childId)
+  if not string.find(childId, "%.") then
+    for index, child in pairs(parent:GetChildren()) do
+      if child:GetID() == childId then return child end
+    end
+    return nil;
+  end
+
+  -- Handle hierarchical IDs
+  local control = parent;
+  for id in string.gmatch(childId, "([^%.]+)") do
+    control = ChildById(control, id)
+    if not control then return nil end
+  end
+  return control
 end
 
 -----------------
 -- UI Mutators --
 -----------------
 
-local TopPanelButtonAdded = false; -- TODO: Is this needed?
+-- TODO: Use colon for member functions?
 local function AddButtonToTopPanel()
-  if TopPanelButtonAdded then return end
-
   Verbose("AlarmClock: AddButtonToTopPanel");
-  local topPanel = ContextPtr:LookUpControl("/InGame/TopPanel/RightContents"); -- top panel right stack where clock civilopedia and menu is
-  if topPanel ~= nil then
-    Controls.AlarmClockTopPanelButton:ChangeParent(topPanel);
-    topPanel:AddChildAtIndex(Controls.AlarmClockTopPanelButton, 3);
-    topPanel:CalculateSize();
-    topPanel:ReprocessAnchoring();
-    TopPanelButtonAdded = true;
-  end
+
+  local topPanel = ContextPtr:LookUpControl("/InGame/TopPanel/RightContents"); -- Top-right stack with Clock, Civilopedia, and Menu
+  Controls.AlarmClockTopPanelButton:ChangeParent(topPanel);
+  topPanel:AddChildAtIndex(Controls.AlarmClockTopPanelButton, 3); -- Insert between the Clock and Civilopedia
+  topPanel:CalculateSize();
+  topPanel:ReprocessAnchoring();
 end
 
 local function ShowDialog()
@@ -89,8 +86,6 @@ local function RefreshUpcomingAlarms()
     ContextPtr:BuildInstanceForControl("UpcomingAlarmInstance", alarmInstance, Controls.UpcomingAlarmRows);
     alarmInstance.Turn:SetText(turn);
     alarmInstance.Message:SetText(message);
-    
-    Controls.UpcomingAlarmRows:GetChildren()[Controls.UpcomingAlarmRows:GetNumChildren()]:SetTag(tonumber(turn));
 
     alarmInstance.TrashButton:RegisterCallback(
       Mouse.eLClick,
@@ -102,8 +97,8 @@ local function RefreshUpcomingAlarms()
     );
   end
   
-  -- Roundabout way of sorting the rows by turn number, since it's not clear how to access the actual value.  TODO: Figure out?
-  Controls.UpcomingAlarmRows:SortChildren(function(a, b) return a:GetTag() < b:GetTag() end);
+  local GetTurnForRow = function(row) return tonumber(ChildById(row, "AlarmRow.AlarmColumnTurn.Turn"):GetText()) end;
+  Controls.UpcomingAlarmRows:SortChildren(function(a, b) return GetTurnForRow(a) < GetTurnForRow(b) end);
 
   if next(UpcomingAlarms) ~= nil then
     Controls.AlarmClockDialogContainer:SetSizeY(460);
@@ -222,10 +217,12 @@ end
 local function OnPlayerTurnActivated(playerId, firstTime)
   if not (firstTime and playerId == Game.GetLocalPlayer()) then return end
 
-  local currentTurn = tostring(CurrentTurn());
+  local currentTurn = CurrentTurn();
   Verbose("AlarmClock: OnPlayerTurnActivated(turn = "..currentTurn..")");
 
   if UpcomingAlarms[currentTurn] then
+    -- TODO: Try using a custom notification type
+    -- TODO: Try inspecting NotificationManager.SendNotification as a table?
     NotificationManager.SendNotification(playerId, NotificationTypes.USER_DEFINED_1, "LOC_AC_NOTIF_MSG", UpcomingAlarms[currentTurn]);
     -- TODO: After we send the notification, try retrieving it and setting some of its callbacks to influence its behaviour!
     UpcomingAlarms[currentTurn] = nil;
