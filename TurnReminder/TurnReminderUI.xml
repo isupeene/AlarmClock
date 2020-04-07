@@ -10,16 +10,16 @@
     <Container ID="Top" Offset="3,0" Size="parent-4,40">
       <Image Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
       <Stack StackGrowth="Right">
-        <Box Size="2,parent"	Color="46,70,95,128" />
+        <Box Size="2,parent" Color="46,70,95,128" />
         <Container Size="70,parent">
-          <Label ID="Turn" Style="ReportValueText"	String="$Turn$" />
+          <Label ID="Turn" Style="ReportValueText" String="$Turn$" />
         </Container>
-        <Box Size="2,parent"	Color="46,70,95,255" />
-        <Container  Size="parent-146,parent" Anchor="L,C" Offset="10,0">
+        <Box Size="2,parent" Color="46,70,95,255" />
+        <Container Size="parent-146,parent" Anchor="L,C" Offset="10,0">
           <!-- NOTE: This WrapWidth is very brittle, and will need to be readjusted if any other widths are changed. -->
-          <Label ID="Message" Anchor="L,C" Align="Left" Style="ReportValueText"	String="$Message$" WrapWidth="500"/>
+          <Label ID="Message" Anchor="L,C" Align="Left" Style="ReportValueText" String="$Message$" WrapWidth="500"/>
         </Container>
-        <Box Size="2,parent"	Color="46,70,95,255" />
+        <Box Size="2,parent" Color="46,70,95,255" />
         <Container Size="60,parent">
           <GridButton ID="TrashButton" Size="32,32" Anchor="C,C" Texture="QueueSlot_Button" SliceCorner="20,23" SliceSize="2,2" SliceTextureSize="42,48" StateOffsetIncrement="0,48">
             <Image Size="parent,parent" Texture="QueueTrash"/>
@@ -30,22 +30,23 @@
     </Container>
   </Instance> <!-- UpcomingReminderInstance -->
 
-  <Container ID="TurnReminderContentContainer" Size="auto,auto" Anchor="R,T">
-    <!-- Button on the top panel  -->
-	  <Button ID="TurnReminderTopPanelButton" Size="29,29" Anchor="C,C" Texture="TurnReminderTopPanelButton.dds" ToolTip="LOC_TR_BTN_TT" ConsumeMouse="1"/>
+  <!-- Button on the top panel -->
+  <Button ID="TurnReminderTopPanelButton" Size="29,29" Anchor="C,C" Texture="TurnReminderTopPanelButton.dds" ToolTip="LOC_TR_BTN_TT" ConsumeMouse="1"/>
+
+  <Container ID="TurnReminderContentContainer" Size="700,460" Anchor="C,C">
 
     <!-- TODO: Consider centering this? -->
-    <Container	Size="700,135" ID="TurnReminderDialogContainer" Anchor="R,T"	AnchorSide="I,I"	Offset="530,130" ConsumeMouse="1" Hidden="1">
-      <SlideAnim	Size="parent,parent"	ID="TurnReminderDialog_Collapse"	Begin="0,0" End="120,0"  Function="OutQuint" FunctionPower="1" Speed="2" Cycle="Once" Stopped="1">
-        <SlideAnim	Size="parent,parent" ID="TurnReminderDialog_Expand"	Begin="0,0" End="-120,0" Function="OutQuint" FunctionPower="3" Speed="2" Cycle="Once" Stopped="1">
-          <Grid ID="TurnReminderDialogContext"	Anchor="C,T" Texture="Controls_PanelBlue" Size="parent,parent" Style="CityPanelSlotGrid" ConsumeMouse="1" Hidden="0"  SliceCorner="25,28" SliceSize="33,18" SliceTextureSize="83,75" >
-            <Stack	ID="TurnReminderDialogStack" Anchor="C,T"	Size="parent-40,auto" StackGrowth="Bottom" StackPadding="3">
-              <Grid Anchor="C,C" Offset="0,10"	Size="parent,24" Style="CityPanelSlotGrid">
+    <Container Size="700,135" ID="TurnReminderDialogContainer" Anchor="C,T" ConsumeMouse="1" Hidden="1">
+      <SlideAnim Size="parent,parent" ID="TurnReminderDialog_Collapse" Begin="0,0" End="120,0" Function="OutQuint" FunctionPower="1" Speed="2" Cycle="Once" Stopped="1">
+        <SlideAnim Size="parent,parent" ID="TurnReminderDialog_Expand" Begin="0,0" End="-120,0" Function="OutQuint" FunctionPower="3" Speed="2" Cycle="Once" Stopped="1">
+          <Grid ID="TurnReminderDialogContext" Anchor="C,T" Texture="Controls_PanelBlue" Size="parent,parent" Style="CityPanelSlotGrid" ConsumeMouse="1" Hidden="0" SliceCorner="25,28" SliceSize="33,18" SliceTextureSize="83,75" >
+            <Stack ID="TurnReminderDialogStack" Anchor="C,T" Size="parent-40,auto" StackGrowth="Bottom" StackPadding="3">
+              <Grid Anchor="C,C" Offset="0,10" Size="parent,24" Style="CityPanelSlotGrid">
                 <Label ID="TurnReminderDialogTitle" Anchor="C,C" String="LOC_TR_DLG_TITLE" Style="PanelHeaderText" FontStyle="stroke" ColorSet="BodyTextBright"/>
               </Grid>
 
               <Grid ID="TurnCounterAndConfirmGrid" Anchor="C,T" Size="parent-6, 40">
-                <Stack	ID="TurnCounterBox" Anchor="L,B" StackGrowth="Right" StackPadding="5" Style="CityPanelSlotGrid">
+                <Stack ID="TurnCounterBox" Anchor="L,B" StackGrowth="Right" StackPadding="5" Style="CityPanelSlotGrid">
                   <Label ID="TurnEditLabel" Anchor="L,B" String="LOC_TR_LBL_TURN_EDIT_LEFT" Style="DiplomacyCivHeader" FontStyle="stroke" ColorSet="BodyTextBright"/>
                   <Button ID="TurnEditLeftButton" Anchor="C,B" Style="ArrowButtonLeft"/>
                   <Grid Anchor="C,B" Texture="Controls_TextArea" SliceTextureSize="22,22" SliceCorner="11,20" Size="60,24">
@@ -54,7 +55,7 @@
                   <Button ID="TurnEditRightButton" Style="ArrowButtonRight"/>
                   <Label ID="TurnEditLabel" Anchor="C,B" String="LOC_TR_LBL_TURN_EDIT_RIGHT" Style="DiplomacyCivHeader" FontStyle="stroke" ColorSet="BodyTextBright"/>
                 </Stack>
-                <GridButton ID="AddTurnReminderButton"	Anchor="R,C" Size="150,40" Style="MainButton" FontStyle="Shadow" String="LOC_OK_BUTTON" />
+                <GridButton ID="AddTurnReminderButton" Anchor="R,C" Size="150,40" Style="MainButton" FontStyle="Shadow" String="LOC_OK_BUTTON" />
               </Grid>
               
               <Grid ID="ReminderTextFrame" Style="EditTextButton" Anchor="C,T" Size="parent,26" Offset="0,10">
@@ -63,17 +64,17 @@
               </Grid>
               
               <Stack ID="UpcomingRemindersStack" Size="parent,300" Hidden="1"> <!-- Stack-within-a-stack. Only function is to control the Hidden state of this whole group. -->
-                <Grid ID="TurnReminderDialogUpcomingGrid" Anchor="C,C" Offset="0,10"	Size="parent,24" Style="CityPanelSlotGrid">
+                <Grid ID="TurnReminderDialogUpcomingGrid" Anchor="C,C" Offset="0,10" Size="parent,24" Style="CityPanelSlotGrid">
                   <Label ID="TurnReminderDialogUpcoming" Anchor="C,C" String="LOC_TR_DLG_UPCOMING" Style="PanelHeaderText" FontStyle="stroke" ColorSet="BodyTextBright"/>
                 </Grid>
                 <Container ID="UpcomingReminderHeaders" Offset="2,10" Size="parent-4,22">
                   <Image Size="parent,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125"/>
                   <Stack StackGrowth="Right">
-                    <Box Size="2,parent"	Color="46,70,95,128"/>
-                    <Container Offset="1,0"	Size="70,parent">
+                    <Box Size="2,parent" Color="46,70,95,128"/>
+                    <Container Offset="1,0" Size="70,parent">
                       <Label Style="ReportHeaderSmallText" String="LOC_HUD_REPORTS_TURN"/>
                     </Container>
-                    <Box Size="2,parent"	Color="46,70,95,255"/>
+                    <Box Size="2,parent" Color="46,70,95,255"/>
                     <Container Size="parent-146,parent" Anchor="L,C" Offset="10,0">
                       <Label Anchor="L,C" Align="Left" Style="ReportHeaderSmallText" String="LOC_TR_COLUMN_MESSAGE"/>
                     </Container>
