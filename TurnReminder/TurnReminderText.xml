@@ -10,6 +10,9 @@
     <Row Tag="LOC_TR_DLG_TITLE" Language="en_US">
       <Text>Turn Reminder</Text>
     </Row>
+    <Row Tag="LOC_TR_NOTIF_MSG" Language="en_US">
+      <Text>Turn Reminder</Text>
+    </Row>
     <Row Tag="LOC_TR_DLG_UPCOMING" Language="en_US">
       <Text>Upcoming Reminders</Text>
     </Row>

@@ -26,7 +26,7 @@ local function BuildNotification(id, message, turn)
     notification.IsCustom            = true
     notification.GetTypeName         = function() return "NOTIFICATION_TURN_REMINDER"; end
     notification.GetPlayerID         = function() return Game.GetLocalPlayer(); end
-    notification.GetMessage          = function() return "Turn Reminder"; end -- Must not be nil
+    notification.GetMessage          = function() return "LOC_TR_NOTIF_MSG"; end -- Must not be nil
     notification.GetIconName         = function() return "ICON_NOTIFICATION_GENERIC"; end
     notification.GetGroup            = function() return NotificationGroups.NONE; end
     notification.GetType             = function() return 888888; end -- 888888 is the default handler. 888889 will trigger the event specified by "GetEventOnActivate"
@@ -58,13 +58,6 @@ local function CurrentTurn()
   return currentTurn;
 end
 
-local function AddUpcomingReminder(turnsInFuture:number, message:string)
-  print("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
-
-  UpcomingReminders[tostring(NextId)] = {Turn = CurrentTurn() + turnsInFuture, Message = message, Id = NextId};
-  NextId = NextId + 1;
-end
-
 -- Returns an iterator over t ordered by f, without modifying t.
 local function Sorted(t, f)
   local sortedValues = {};
@@ -74,8 +67,16 @@ local function Sorted(t, f)
   local i = 0;
   return function()
     i = i + 1;
+    if sortedValues[i] == nil then return nil end
     return sortedValues[i].Key, sortedValues[i].Value;
   end
+end
+
+local function AddUpcomingReminder(turnsInFuture:number, message:string)
+  print("TurnReminder: AddUpcomingReminder(", turnsInFuture, ", ", message, ")");
+
+  UpcomingReminders[tostring(NextId)] = {Turn = CurrentTurn() + turnsInFuture, Message = message, Id = NextId};
+  NextId = NextId + 1;
 end
 
 -----------------
@@ -101,11 +102,14 @@ local function ShowDialog()
   Controls.TurnEditBox:SetText("1");
   Controls.ReminderText:SetText("");
   Controls.TurnReminderDialogContainer:SetHide(false);
+
+  Controls.ReminderText:TakeFocus();
 end
 
 local function HideDialog()
   print("TurnReminder: HideDialog");
   Controls.TurnReminderDialogContainer:SetHide(true);
+  Controls.ReminderText:DropFocus();
 end
 
 local function RefreshUpcomingReminders()
@@ -144,6 +148,7 @@ local function RefreshUpcomingReminders()
 end
 
 local function ToggleDialogVisibility()
+  print("TurnReminder: ToggleDialogVisibility");
   if not Controls.TurnReminderDialogContainer:IsHidden() then
     HideDialog();
   else
@@ -151,9 +156,29 @@ local function ToggleDialogVisibility()
   end
 end
 
+local function CommitEntry()
+  print("TurnReminder: CommitEntry");
+
+  AddUpcomingReminder(tonumber(Controls.TurnEditBox:GetText() or 0), Controls.ReminderText:GetText());
+  RefreshUpcomingReminders();
+  Controls.ReminderText:SetText("");
+end
+
 ---------------
 -- Callbacks --
 ---------------
+
+-- The OK button on the right of the dialog
+local function OnAddTurnReminderButtonClick()
+  print("TurnReminder: OnAddTurnReminderButtonClick");
+
+  if (Controls.ReminderText:GetText() or "") == "" then
+    HideDialog();
+  else
+    CommitEntry();
+    Controls.ReminderText:TakeFocus();
+  end
+end
 
 -- The top panel button next to the CivPedia
 local function OnTopPanelButtonClick()
@@ -188,19 +213,10 @@ local function OnTurnEditBoxCommit()
   end
 end
 
--- The OK button on the right of the dialog
-local function OnAddTurnReminderButtonClick()
-  print("TurnReminder: OnAddTurnReminderButtonClick");
-
-  if (Controls.ReminderText:GetText() or "") == "" then
-    HideDialog()
-  else
-    AddUpcomingReminder(tonumber(Controls.TurnEditBox:GetText() or 0), Controls.ReminderText:GetText());
-    RefreshUpcomingReminders();
-    Controls.ReminderText:SetText("");
-  end
+local function OnReminderTextCommit()
+  print("TurnReminder: OnReminderTextCommit");
+  OnAddTurnReminderButtonClick();
 end
-
 
 -- Callback when we load into the game for the first time
 local function OnLoadGameViewStateDone()
@@ -212,18 +228,18 @@ end
 -- Callback for keystrokes
 local function InputHandler(input:table)
   local key = input:GetKey();
-  -- Note that we use KeyUp for the ESC key, since this is what the game is listening to.
-  -- Handling this event prevents us from getting a double-ESC, and e.g. opening the game menu or
-  -- closing some other window.
-  if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp and key == Keys.VK_ESCAPE then
-    print("TurnReminder: InputHandler(ESC)");
+  -- Note that we use KeyUp for the ESC and Enter keys, since this is what the game is listening to.
+  -- Handling KeyUp prevents us from getting a double-input, and e.g. opening the game menu or
+  -- progressing to the next turn.
+  if not Controls.TurnReminderDialogContainer:IsHidden() and input:GetMessageType() == KeyEvents.KeyUp then
     if key == Keys.VK_ESCAPE then
+      print("TurnReminder: InputHandler(ESC)");
       HideDialog();
       return true;
-    -- TODO: Try to get Enter to work consistently
-    --elseif key == 102 then
-      --OnAddTurnReminderButtonClick();
-      --return true;
+    elseif key == 102 then
+      print("TurnReminder: InputHandler(Enter)");
+      OnAddTurnReminderButtonClick();
+      return true;
     end
   end
 
@@ -244,7 +260,6 @@ local function OnPlayerTurnActivated(playerId, firstTime)
     if reminder.Turn == currentTurn then
       local NotificationTurn = CurrentTurn()
       local notification = BuildNotification(reminder.Id, reminder.Message, currentTurn);
-            
       LuaEvents.CustomNotification_OnDefaultAddNotification(notification);
 
       UpcomingReminders[index] = nil
@@ -265,6 +280,7 @@ Controls.TurnEditLeftButton:RegisterCallback(Mouse.eLClick, OnTurnEditLeftButton
 Controls.TurnEditRightButton:RegisterCallback(Mouse.eLClick, OnTurnEditRightButtonClick);
 Controls.AddTurnReminderButton:RegisterCallback(Mouse.eLClick, OnAddTurnReminderButtonClick);
 Controls.TurnEditBox:RegisterCommitCallback(OnTurnEditBoxCommit);
+Controls.ReminderText:RegisterCommitCallback(OnReminderTextCommit);
 
 Events.PlayerTurnActivated.Add(OnPlayerTurnActivated);
 

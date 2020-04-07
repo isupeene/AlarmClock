@@ -58,7 +58,8 @@
               </Grid>
               
               <Grid ID="ReminderTextFrame" Style="EditTextButton" Anchor="C,T" Size="parent,26" Offset="0,10">
-                <EditBox ID="ReminderText" Style="EditTextArea" Size="parent-34,22" Anchor="R,C" MaxLength="80" EditMode="1" KeepFocus="1"/>
+                <!--<EditBox ID="ReminderText" Style="Civilopedia_SearchEditBox" CallOnChar="1" />-->
+                <EditBox ID="ReminderText" Style="EditTextArea" Size="parent-34,22" Anchor="R,C" MaxLength="80" KeepFocus="1"/>
               </Grid>
               
               <Stack ID="UpcomingRemindersStack" Size="parent,300" Hidden="1"> <!-- Stack-within-a-stack. Only function is to control the Hidden state of this whole group. -->
