@@ -14,3 +14,6 @@ A simple Alarm Clock mod for Civ VI.
 #### Known Issues
 * Alt-R does not close the window while an EditBox has focus, since the EditBox captures the keystroke.
 * Activating the notification pans the camera. There's likely a way to disable panning by passing more arguments to NotificationManager.SendNotification, but most modders don't even know that function exists, much less what its signature is, since it's never called from Lua in the game's code.
+
+#### Compatibility
+* The notification is given type NotificationTypes.USER_DEFINED_1.  Other mods sending custom notifications of the same type may not integrate well.

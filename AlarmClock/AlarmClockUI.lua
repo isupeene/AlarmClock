@@ -227,7 +227,8 @@ local function OnPlayerTurnActivated(playerId, firstTime)
 
   if UpcomingAlarms[currentTurn] then
     NotificationManager.SendNotification(playerId, NotificationTypes.USER_DEFINED_1, "LOC_AC_NOTIF_MSG", UpcomingAlarms[currentTurn]);
-     UpcomingAlarms[currentTurn] = nil;
+    -- TODO: After we send the notification, try retrieving it and setting some of its callbacks to influence its behaviour!
+    UpcomingAlarms[currentTurn] = nil;
   end
   RefreshUpcomingAlarms();
 end
