@@ -24,13 +24,13 @@ local function CurrentTurn()
   return currentTurn;
 end
 
-local function AddUpcomingAlarm(turnsInFuture:number, message:string)
+local function AddUpcomingAlarm(turnsInFuture, message)
   Verbose("AlarmClock: AddUpcomingAlarm(", turnsInFuture, ", ", message, ")");
   UpcomingAlarms[CurrentTurn() + turnsInFuture] = message;
 end
 
 local function ChildById(parent, childId)
-  if not string.find(childId, "%.") then
+  if not childId:find("%.") then
     for index, child in pairs(parent:GetChildren()) do
       if child:GetID() == childId then return child end
     end
@@ -39,7 +39,7 @@ local function ChildById(parent, childId)
 
   -- Handle hierarchical IDs
   local control = parent;
-  for id in string.gmatch(childId, "([^%.]+)") do
+  for id in childId:gmatch("([^%.]+)") do
     control = ChildById(control, id)
     if not control then return nil end
   end
@@ -50,7 +50,6 @@ end
 -- UI Mutators --
 -----------------
 
--- TODO: Use colon for member functions?
 local function AddButtonToTopPanel()
   Verbose("AlarmClock: AddButtonToTopPanel");
 
@@ -221,8 +220,7 @@ local function OnPlayerTurnActivated(playerId, firstTime)
   Verbose("AlarmClock: OnPlayerTurnActivated(turn = "..currentTurn..")");
 
   if UpcomingAlarms[currentTurn] then
-    NotificationManager.SendNotification(playerId, "NOTIFICATION_ALARM_CLOCK", "LOC_AC_NOTIF_MSG", UpcomingAlarms[currentTurn]);
-    -- TODO: After we send the notification, try retrieving it and setting some of its callbacks to influence its behaviour!
+    NotificationManager.SendNotification(playerId, "NOTIFICATION_ALARM_CLOCK", "LOC_AC_NOTIF_MSG", UpcomingAlarms[currentTurn], currentTurn);
     UpcomingAlarms[currentTurn] = nil;
   end
   RefreshUpcomingAlarms();
