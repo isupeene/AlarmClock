@@ -16,3 +16,4 @@ Subscribe to the latest version on the [Steam Workshop](https://steamcommunity.c
 #### Known Issues
 * Alt-R does not close the window while an EditBox has focus, since the EditBox captures the keystroke.
 * Activating the notification pans the camera. There's likely a way to disable panning by passing more arguments to NotificationManager.SendNotification, but most modders don't even know that function exists, much less what its signature is, since it's never called from Lua in the game's code.
+* The notification icon will be set to whatever was last in that notification slot, rather than consistently using the generic notification icon. This, again, could most likely be fixed by passing the correct arguments to NotificationManager.SendNotification.
