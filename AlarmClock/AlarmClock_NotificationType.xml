@@ -7,7 +7,11 @@
     <Row Type="NOTIFICATION_ALARM_CLOCK" Kind="KIND_NOTIFICATION"/>
   </Types>
   <Notifications>
-    <Row NotificationType="NOTIFICATION_ALARM_CLOCK" SeverityType="LOW" Icon="ICON_NOTIFICATION_GENERIC"/>
+    <!-- Note that setting Icon="NOTIFICATION_ICON_GENERIC" here doesn't do anything.
+         GetIconName will still return "ICON_NOTIFICATION_ALARM_CLOCK". This means we
+         could presumably add an icon with that name, but since it doesn't exist,
+         "NOTIFICATION_ICON_GENERIC" is used, which is just fine by me. -->
+    <Row NotificationType="NOTIFICATION_ALARM_CLOCK"/>
   </Notifications>
 </GameInfo>
 

@@ -221,6 +221,7 @@ local function OnPlayerTurnActivated(playerId, firstTime)
 
   if UpcomingAlarms[currentTurn] then
     NotificationManager.SendNotification(playerId, "NOTIFICATION_ALARM_CLOCK", "LOC_ALARM_CLOCK_NOTIF_MSG", UpcomingAlarms[currentTurn]);
+    NotificationManager.RestoreVisualState(playerId);  -- This forces the game to update the alarm icon. Without it, we get the icon of the last alarm to occupy the same slot in the NotificationPanel!
     UpcomingAlarms[currentTurn] = nil;
   end
   RefreshUpcomingAlarms();
