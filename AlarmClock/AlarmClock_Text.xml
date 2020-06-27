@@ -3,10 +3,10 @@
 <!-- Author: Isaac Supeene -->
 <!-- DateCreated: 4/4/2020 1:38:07 PM -->
 <GameData>
-	<LocalizedText>
-		<Row Tag="LOC_ALARM_CLOCK_BTN_TT" Language="en_US">
-			<Text>Alarm Clock</Text>
-		</Row>
+  <LocalizedText>
+    <Row Tag="LOC_ALARM_CLOCK_BTN_TT" Language="en_US">
+      <Text>Alarm Clock</Text>
+    </Row>
     <Row Tag="LOC_ALARM_CLOCK_DLG_TITLE" Language="en_US">
       <Text>Alarm Clock</Text>
     </Row>
@@ -28,5 +28,30 @@
     <Row Tag="LOC_ALARM_CLOCK_COLUMN_DELETE" Language="en_US">
       <Text>Delete</Text>
     </Row>
-	</LocalizedText>
+
+    <Row Tag="LOC_ALARM_CLOCK_BTN_TT" Language="de_DE">
+      <Text>Wecker</Text>
+    </Row>
+    <Row Tag="LOC_ALARM_CLOCK_DLG_TITLE" Language="de_DE">
+      <Text>Wecker</Text>
+    </Row>
+    <Row Tag="LOC_ALARM_CLOCK_NOTIF_MSG" Language="de_DE">
+      <Text>Wecker</Text>
+    </Row>
+    <Row Tag="LOC_ALARM_CLOCK_DLG_UPCOMING" Language="de_DE">
+      <Text>Anstehende Erinnerungen</Text>
+    </Row>
+    <Row Tag="LOC_ALARM_CLOCK_LBL_TURN_EDIT_LEFT" Language="de_DE">
+      <Text>Erinnere mich in </Text>
+    </Row>
+    <Row Tag="LOC_ALARM_CLOCK_LBL_TURN_EDIT_RIGHT" Language="de_DE">
+      <Text> Runden</Text>
+    </Row>
+    <Row Tag="LOC_ALARM_CLOCK_COLUMN_MESSAGE" Language="de_DE">
+      <Text>Nachricht</Text>
+    </Row>
+    <Row Tag="LOC_ALARM_CLOCK_COLUMN_DELETE" Language="de_DE">
+      <Text>Löschen</Text>
+    </Row>
+</LocalizedText>
 </GameData>
